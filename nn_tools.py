@@ -6,7 +6,6 @@ import torch.nn.functional as F
 import torch.optim as optim
 import numpy as np
 
-
 class CsvDataset(Dataset):
 
     def __init__(self, df, transform=None):
@@ -33,6 +32,21 @@ class CsvDataset(Dataset):
             sample = self.transform(sample)
         return sample
     
+
+class img_dataset(Dataset):
+
+    def __init__(self, datapoint, transform = None):
+        self.transform = transform
+        self.dataset = torch.Tensor(datapoint)
+
+    def __len__(self):
+        return len(self.dataset)
+
+    def __getitem__(self, idx):
+        sample = self.dataset[idx]
+        return sample
+
+
 class ToTensor(object):
     """Convert sample to Tensors."""
 
@@ -143,12 +157,15 @@ class data_API(nn.Module):
         
         self.loss = loss_fn
         if val_loader != None:
-            self.val_history = []
-        train_loss_log = []
-        val_loss_log = []
+            self.val_loss_hist = []
+            self.val_acc_hist = []
+        
+        self.train_loss_hist = []
+        self.train_acc_hist = []
+        
         for epoch_num in range(num_epochs):
             ### TRAIN
-            train_loss= []
+            train_loss = []
             self.train() # Training mode (e.g. enable dropout, batchnorm updates,...)
             for sample_batched in train_loader:
                 # Move data to device
@@ -157,7 +174,7 @@ class data_API(nn.Module):
                 # Forward pass
                 out = self(x_batch)
                 # Compute loss
-                loss = loss_fn(out, label_batch)
+                loss = self.loss(out, label_batch)
                 # Backpropagation
                 self.zero_grad()
                 loss.backward()
@@ -166,15 +183,19 @@ class data_API(nn.Module):
                 # Save train loss for this batch
                 loss_batch = loss.detach().cpu().numpy()
                 train_loss.append(loss_batch)
+                
+               # with torch.no_grad():
+    #                self.train_acc_hist.append(accuracy_score(label_batch, out))
             train_loss = np.mean(train_loss)
-            train_loss_log.append(train_loss)
+            self.train_loss_hist.append(train_loss)
+
             ### VALIDATION
             
             #######################
             if val_loader != None:
-                self.val_history.append(self.write_validation(val_loader, verbose, epoch_num))
-                
-        self.train_history = train_loss_log
+                self.val_loss_hist.append(self.write_validation(val_loader, verbose, epoch_num))
+  #              self.val_acc_hist.append(self.class_accuracy(val_loader))
+
     
     def write_validation(self, val_loader, verbose, epoch_num):
         val_loss= []
@@ -197,28 +218,27 @@ class data_API(nn.Module):
                 print(f"Epoch: {epoch_num} :::::::::: AVERAGE VAL LOSS: {np.mean(val_loss):.5f}", end = '\r')
         return val_loss
         
-    def test_model(self, test_loader, loss_fn):
-        with torch.no_grad():
-            x = sample[0].to(self.device)
-            label = sample[1].to(self.device)
-            # Forward pass
-            out = self(x)
-            # Compute loss
-            loss = loss_fn(out, label)
-            # Save test loss for this batch
-            test_loss = loss.detach().cpu().numpy()
-        self.out = out
-        self.test_loss = test_loss
+    def class_accuracy(self, dataloader):
         
-    def class_accuracy(self, val_loader):
-        val_loss= []
         self.eval() # Evaluation mode (e.g. disable dropout, batchnorm,...)
         with torch.no_grad(): # Disable gradient tracking
+            for sample_batched in dataloader:
+                # Move data to device
+                x_batch = sample_batched[0].to(self.device)
+                label_batch = sample_batched[1].to(self.device)
+                # Forward pass
+                out = self(x_batch)
+                print(out)
+               # accuracy = accuracy_score(label_batch, out, normalize = True)
+            
+        return accuracy
+    
+    def predict(self, datapoint, activation, *args, **kwargs):
 
-            # Move data to device
-            x_batch = sample_batched[0].to(self.device)
-            label_batch = sample_batched[1].to(self.device)
-            # Forward pass
-            val_dataloader.dataset.targets
-            out = self(x_batch)
+        with torch.no_grad():
+            x_val = datapoint[0].to(self.device)
+            out = self(x_val)
+            predicted_label = activation(out, *args, **kwargs)
+        return predicted_label
+            
                 
