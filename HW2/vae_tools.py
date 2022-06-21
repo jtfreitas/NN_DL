@@ -260,7 +260,7 @@ def train_AE(autoencoder, num_epochs, train_dataloader, loss_fn, optim, device, 
                     best_epoch = epoch
                     best_loss_val = val_loss
             else:
-                if train_loss.item() < best_loss_train
+                if train_loss.item() < best_loss_train:
                     best_epoch = epoch
                     best_loss_train = train_loss
             #Save parameters for all epochs        
