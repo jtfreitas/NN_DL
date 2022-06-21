@@ -140,7 +140,7 @@ class Autoencoder(nn.Module):
         return x
 
 
-def train_epoch(autoencoder: Autoencoder, device: torch.device, dataloader: torch.utils.data.DataLoader, loss_fn: torch.nn.modules.loss, optimizer: torch.optim, verbose: bool) -> float:
+def train_epoch(autoencoder, device, dataloader, loss_fn, optimizer, verbose):
     # Set train mode for both the encoder and the decoder
     loss_fn.to(device)
     autoencoder.train()
@@ -162,7 +162,7 @@ def train_epoch(autoencoder: Autoencoder, device: torch.device, dataloader: torc
                 f'\rpartial train loss (single batch): {loss.data:4f}', end='')
     if verbose:
         print(
-            f'partial train loss (single batch): {loss.data:4f}', end='\tFinding validation loss... ')
+            f'partial train loss (single batch): {loss.data:4f}', end='\t')
 
     return loss.data
 
@@ -194,11 +194,19 @@ def test_epoch(autoencoder, device, dataloader, loss_fn):
 # Training cycle
 
 
-def train_AE(autoencoder, train_dataloader, test_dataloader, num_epochs, loss_fn, optim, device, save_dir=None, verbose=True):
+def train_AE(autoencoder, num_epochs, train_dataloader, loss_fn, optim, device, test_dataloader=None, save_dir=None, verbose=True):
+    """
+    Trains autoencoder model. 
+    """
+    
     if autoencoder.keep_loss:
         autoencoder.loss_history['training'] = [*autoencoder.loss_history['training'], *[0]*num_epochs]
-        autoencoder.loss_history['validation'] = [*autoencoder.loss_history['validation'], *[0]*num_epochs]
-    best_loss_val = 9999999.0
+        if test_dataloader != None:
+            autoencoder.loss_history['validation'] = [*autoencoder.loss_history['validation'], *[0]*num_epochs]
+            
+    best_loss_train = 9999999.0
+    if test_dataloader != None:
+        best_loss_val = 9999999.0
     best_epoch = 0
     epoch_zero = autoencoder.epochs_trained
 
@@ -223,20 +231,22 @@ def train_AE(autoencoder, train_dataloader, test_dataloader, num_epochs, loss_fn
             verbose=verbose)
 
         # Validation (use the testing function)
-        val_loss = test_epoch(
-            autoencoder,
-            device=device,
-            dataloader=test_dataloader,
-            loss_fn=loss_fn)
+        if test_dataloader != None:
+            val_loss = test_epoch(
+                autoencoder,
+                device=device,
+                dataloader=test_dataloader,
+                loss_fn=loss_fn)
 
         # Print Validation loss
-        if verbose:
-            print(f'Validation loss: {val_loss:4f}', end='\n')
+            if verbose:
+                print(f'Validation loss: {val_loss:4f}', end='\n')
 
         # Store losses in dict
         if autoencoder.keep_loss:
             autoencoder.loss_history['training'][epoch] = train_loss.item()
-            autoencoder.loss_history['validation'][epoch] = val_loss.item()
+            if test_dataloader != None:
+                autoencoder.loss_history['validation'][epoch] = val_loss.item()
 
         # Plot progress
         # Get the output of a specific image (the test image at index 0 in this case)
@@ -244,17 +254,28 @@ def train_AE(autoencoder, train_dataloader, test_dataloader, num_epochs, loss_fn
         autoencoder.eval()
         autoencoder.epochs_trained += 1
         if save_dir != None:
-            if val_loss.item() < best_loss_val:
-                best_epoch = epoch
-                best_loss_val = val_loss
-                torch.save(autoencoder.state_dict(),
-                           f'{save_dir}/params/t{epoch + 1}.pth')
+            #Update validation loss only if test_dataloader is provided
+            if test_dataloader != None:
+                if val_loss.item() < best_loss_val:
+                    best_epoch = epoch
+                    best_loss_val = val_loss
+            else:
+                if train_loss.item() < best_loss_train
+                    best_epoch = epoch
+                    best_loss_train = train_loss
+            #Save parameters for all epochs        
+            torch.save(autoencoder.state_dict(),
+                       f'{save_dir}/params/t{epoch + 1}.pth')
+            
             plt.ioff()
-            fig, axs = plot_inout(autoencoder, test_dataloader.dataset, device, idx = 39)
+            fig, axs = plot_inout(autoencoder, train_dataloader.dataset, device, idx = 39)
             fig.savefig(f'{plots_path}/t={epoch + 1}.jpg')
             plt.close()
     if verbose:
-        print(f'Best loss = {best_loss_val:.4f} in epoch {best_epoch}')
+        if test_dataloader != None:        
+            print(f'Best loss = {best_loss_train:.4f} in epoch {best_epoch}')
+        else:
+            print(f'Best loss = {best_loss_val:.4f} in epoch {best_epoch}')
     return best_loss_val, best_epoch
 
 
