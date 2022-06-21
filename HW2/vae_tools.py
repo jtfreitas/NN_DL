@@ -243,17 +243,18 @@ def train_AE(autoencoder, train_dataloader, test_dataloader, num_epochs, loss_fn
         img = train_dataloader.dataset.data[0].unsqueeze(0).to(device)
         autoencoder.eval()
         autoencoder.epochs_trained += 1
-        if val_loss.item() < best_loss_val:
-            best_epoch = epoch
-            best_loss_val = val_loss
-            if save_dir != None:
+        if save_dir != None:
+            if val_loss.item() < best_loss_val:
+                best_epoch = epoch
+                best_loss_val = val_loss
                 torch.save(autoencoder.state_dict(),
                            f'{save_dir}/params/t{epoch + 1}.pth')
-                plt.ioff()
-                fig, axs = plot_inout(autoencoder, test_dataloader.dataset, device, idx = 39)
-                fig.savefig(f'{plots_path}/t={epoch + 1}.jpg')
-                plt.close()
-    print(f'Best loss = {best_loss_val:.4f} in epoch {best_epoch}')
+            plt.ioff()
+            fig, axs = plot_inout(autoencoder, test_dataloader.dataset, device, idx = 39)
+            fig.savefig(f'{plots_path}/t={epoch + 1}.jpg')
+            plt.close()
+    if verbose:
+        print(f'Best loss = {best_loss_val:.4f} in epoch {best_epoch}')
     return best_loss_val, best_epoch
 
 
