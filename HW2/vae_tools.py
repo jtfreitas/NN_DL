@@ -248,25 +248,28 @@ def train_AE(autoencoder, num_epochs, train_dataloader, loss_fn, optim, device, 
             if test_dataloader != None:
                 autoencoder.loss_history['validation'][epoch] = val_loss.item()
 
-        # Plot progress
-        # Get the output of a specific image (the test image at index 0 in this case)
-        try:
-            img = train_dataloader.dataset.data[0].unsqueeze(0).to(device)
-        except AttributeError:
-            # In the case a subset is being used
-            img = train_dataloader.dataset.dataset.data[0].unsqueeze(0).to(device)
-        autoencoder.eval()
+
         autoencoder.epochs_trained += 1
+        if test_dataloader != None:
+            if val_loss.item() < best_loss_val:
+                best_epoch = epoch
+                best_loss_val = val_loss
+                best_loss_train = train_loss
+        else:
+            if train_loss.item() < best_loss_train:
+                best_epoch = epoch
+                best_loss_train = train_loss
         if save_dir != None:
+            # Plot progress
+            # Get the output of a specific image (the test image at index 0 in this case)
+            try:
+                img = train_dataloader.dataset.data[0].unsqueeze(0).to(device)
+            except:
+                img = train_dataloader.dataset.dataset.data[0].unsqueeze(0).to(device)
+                
+            autoencoder.eval()
             #Update validation loss only if test_dataloader is provided
-            if test_dataloader != None:
-                if val_loss.item() < best_loss_val:
-                    best_epoch = epoch
-                    best_loss_val = val_loss
-            else:
-                if train_loss.item() < best_loss_train:
-                    best_epoch = epoch
-                    best_loss_train = train_loss
+
             #Save parameters for all epochs        
             torch.save(autoencoder.state_dict(),
                        f'{save_dir}/params/t{epoch + 1}.pth')
@@ -277,11 +280,14 @@ def train_AE(autoencoder, num_epochs, train_dataloader, loss_fn, optim, device, 
             plt.close()
     if verbose:
         if test_dataloader != None:        
-            print(f'Best loss = {best_loss_train:.4f} in epoch {best_epoch}')
-        else:
             print(f'Best loss = {best_loss_val:.4f} in epoch {best_epoch}')
-    return best_loss_val, best_epoch
-
+        else:
+            print(f'Best loss = {best_loss_train:.4f} in epoch {best_epoch}')
+    
+    if test_dataloader != None:
+        return best_loss_val, best_epoch
+    else:
+        return best_loss_train, best_epoch
 
 
 def plot_inout(autoencoder, dataset, device, idx = None):
