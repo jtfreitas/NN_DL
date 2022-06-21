@@ -250,7 +250,11 @@ def train_AE(autoencoder, num_epochs, train_dataloader, loss_fn, optim, device, 
 
         # Plot progress
         # Get the output of a specific image (the test image at index 0 in this case)
-        img = train_dataloader.dataset.data[0].unsqueeze(0).to(device)
+        try:
+            img = train_dataloader.dataset.data[0].unsqueeze(0).to(device)
+        except AttributeError:
+            # In the case a subset is being used
+            img = train_dataloader.dataset.dataset.data[0].unsqueeze(0).to(device)
         autoencoder.eval()
         autoencoder.epochs_trained += 1
         if save_dir != None:
