@@ -1,27 +1,28 @@
 import torch
-from torch.utils.data import Dataset
+from torchvision import transforms
+from torch.utils.data import Dataset, DataLoader, ConcatDataset
 import torch
 import torch.nn as nn
 import numpy as np
-
+import pandas as pd
+from copy import deepcopy
 
 class pd_dataset(Dataset):
-
+    """
+    Class to incorporate pandas DataFrame into PyTorch dataloader
+    """
     def __init__(self, df, transform=None):
         """
         Args:
-            df : pandas dataframe
-            transform (callable, optional): Optional transform to be applied
+            df        : pandas DataFrame
+            transform : Optional transform to be applied
                 on a sample.
         """
         self.transform = transform
-        # Read the file and split the lines in a list
+        # Read the file and split the lines in a numpy array
         self.data = df.values
 
-        # Each element of the list self.data is a tuple: (input, output)
-
     def __len__(self):
-        # The length of the dataset is simply the length of the self.data list
         return len(self.data)
 
     def __getitem__(self, idx):
@@ -33,8 +34,9 @@ class pd_dataset(Dataset):
 
 
 class ToTensor(object):
-    """Convert sample to Tensors."""
-
+    """
+    Convert sample to Tensors.
+    """
     def __call__(self, sample):
         x, y = sample
         return (torch.tensor([x]).float(),
@@ -42,8 +44,13 @@ class ToTensor(object):
 
 
 class training_API(nn.Module):
-
+    """
+    Class implementing all training and evaluation tools.
+    """
     def __init__(self, device):
+        """
+        Initializes required superseding methods.
+        """
         super().__init__()
         super().train()
         super().zero_grad()
@@ -51,25 +58,42 @@ class training_API(nn.Module):
         self.device = device
 
     def train_model(self, train_loader, val_loader, num_epochs, loss_fn, optimizer, verbose=True):
+        """
+        Performs num_epochs of training on model
+        Args:
+            train_loader : Dataloader of training set
+            val_loader   : Dataloader of validation set
+            num_epochs   : Number of training epochs
+            loss_fn      : Loss function
+            optimizer    : Optimizer
+        """
         self.history = dict()
-        train_loss_log = []
-        val_loss_log = []
+        train_loss_log = np.zeros(num_epochs)
+        val_loss_log = np.zeros(num_epochs)
         for epoch_num in range(num_epochs):
             train_loss = self.train_step(train_loader, loss_fn, optimizer)
-            train_loss_log.append(train_loss)
-
+            train_loss_log[epoch_num] = train_loss
+            
             val_loss = self.evaluate(val_loader, loss_fn, verbose=False)
-
             if verbose:
                 print(
-                    f"Epoch: {epoch_num} >>> Training loss: {train_loss:.5f} | Validation loss: {val_loss:.5f}", end='\r')
-            val_loss_log.append(val_loss)
+                    f"Epoch: {epoch_num+1} >>> Training loss: {train_loss:.5f} | Validation loss: {val_loss:.5f}", end='\r')
+            val_loss_log[epoch_num] = val_loss
 
         self.history['train'] = train_loss_log
         self.history['valid'] = val_loss_log
-        self.history['epoch'] = range(num_epochs)
+        self.history['epoch'] = np.array(range(1, num_epochs+1))
+        return val_loss_log[-1]
 
     def train_step(self, dataloader, loss_fn, optimizer):
+        """
+        Performs one training epoch.
+        Args:
+            dataloader : Dataloader of training set
+            loss_fn    : Loss function
+            optimizer  : Optimizer
+        """
+
         train_loss = []
         self.train()  # Training mode (e.g. enable dropout, batchnorm updates,...)
         for sample_batched in dataloader:
@@ -77,19 +101,18 @@ class training_API(nn.Module):
             x_batch = sample_batched[0].to(self.device)
             label_batch = sample_batched[1].to(self.device)
 
+            #Zero the gradients
+            optimizer.zero_grad()
+            
             # Forward pass
             out = self(x_batch)
 
-            # Compute loss
+            # Compute loss, back-propagate
             loss = loss_fn(out, label_batch)
-
-            # Backpropagation
-            self.zero_grad()
             loss.backward()
 
             # Update the weights
             optimizer.step()
-
             # Save train loss for this batch
             loss_batch = loss.detach().cpu().numpy()
             train_loss.append(loss_batch)
@@ -115,60 +138,105 @@ class training_API(nn.Module):
                 print(f"Loss = {data_loss}")
             return data_loss
 
-    def write_validation(self, val_loader, verbose, epoch_num):
-        val_loss = []
-        self.eval()  # Evaluation mode (e.g. disable dropout, batchnorm,...)
-        with torch.no_grad():  # Disable gradient tracking
-            for sample_batched in val_loader:
-                # Move data to device
-                x_batch = sample_batched[0].to(self.device)
-                label_batch = sample_batched[1].to(self.device)
-                # Forward pass
-                out = self(x_batch)
-                # Compute loss
-                the_loss = self.loss(out, label_batch)
-                # Save val loss for this batch
-                loss_batch = the_loss.detach().cpu().numpy()
-                val_loss.append(loss_batch)
-            # Save average validation loss
-            val_loss = np.mean(val_loss)
-            if verbose:
-                print(
-                    f"Epoch: {epoch_num} :::::::::: AVERAGE VAL LOSS: {np.mean(val_loss):.5f}", end='\r')
-        return val_loss
+    def cross_validate(self, train_loader, test_loader, num_epochs, loss_fn, optimizer, k):
+        """
+        Cross-validate the model using k-fold.
+        """
+        composed_transform = transforms.Compose([ToTensor()])
 
-    def predict(self, datapoint, activation, *args, **kwargs):
+        # Split the dataset in k folds
+        samples_per_fold = train_loader.dataset.__len__() // k
 
-        with torch.no_grad():
-            x_val = datapoint[0].to(self.device)
-            out = self(x_val)
-            predicted_label = activation(out, *args, **kwargs)
-        return predicted_label
+        fold_losses = np.zeros((2, k, num_epochs))
+        # Check the type of dataset used
+        if train_loader.dataset.__class__ == pd_dataset:
+            train_set_folds = [
+                pd_dataset(
+                    pd.DataFrame(
+                    train_loader.dataset.data[
+                        samples_per_fold*i:samples_per_fold*(i+1)]), transform=composed_transform)
+                    for i in range(k)]
 
+        else:
+            train_set_folds = [train_loader.dataset[samples_per_fold*i:samples_per_fold*(i+1)] for i in range(k)]
 
+        if self.__class__ == reg_model:
+            model_fold = self.__class__(1, self.params, 1, self.device)
+        # elif model.__class__ == CNN2d:
+        #     pass
+
+        # Create a copy of the optimizer to use on the fold model
+        fold_optim = optimizer.__class__(
+            model_fold.parameters(), lr=optimizer.param_groups[0]['lr'])
+
+        for fold in range(k):
+            print(f"Fold {fold+1}/{k}...", end='\t')
+            # Re-initialize the weights of the model
+            model_fold.reset_weights()
+            # Create a deepcopy of the folds to avoid modifying the original list
+            fold_copy = deepcopy(train_set_folds)
+            # pops the k-th fold to use for validation
+            valid_fold = DataLoader(fold_copy.pop(fold), batch_size = None)
+            # makes training dataloader from the remaining folds
+            train_fold = DataLoader(ConcatDataset(fold_copy),
+                        batch_size=None, shuffle=True
+                                )
+
+            # Send the temporary model to the device
+            model_fold.to(model_fold.device)
+
+            # Train the model
+            model_fold.train_model(
+                train_fold, valid_fold, num_epochs, loss_fn, fold_optim, verbose=False)
+            fold_losses[0,fold] = model_fold.history['train']
+            fold_losses[1,fold] = model_fold.history['valid']
+            print("Done.")
+
+    
+        self.load_state_dict(model_fold.state_dict())    
+        self.history['train'], self.history['valid'] = np.mean(fold_losses, axis=1)
+        self.history['epoch'] = np.array(range(1, num_epochs+1))
+        
 class reg_model(training_API):
 
-    def __init__(self, N_input, N_h1, N_h2, N_h3, N_out, device):
+    def __init__(self, N_input, params, N_out, device):
         """
+        Args:
         n_input - Input size
-        N_h1 - Neurons in the 1st hidden layer
-        N_h2 - Neurons in the 2nd hidden layer
+        params - Dict of parameters for the model
         N_out - Output size
+        device - Device to use
+
+        The dictionary structure allows easier implementation of different models
+        through hyperparameter tuning.
         """
         super().__init__(device)
+        self.params = params
+        self.act = getattr(nn, params['activation'])()
 
-        print('Network initialized')
+        self.model = nn.Sequential(
+            nn.Linear(in_features=N_input, out_features=self.params['N_h1']),
+            nn.Dropout(self.params['dropout']),
+            self.act,
+            nn.Linear(in_features=self.params['N_h1'], out_features=self.params['N_h2']),
+            nn.Dropout(params['dropout']),
+            self.act,
+            nn.Linear(in_features=self.params['N_h2'], out_features=self.params['N_h3']),
+            nn.Dropout(self.params['dropout']),
+            self.act,
+            nn.Linear(in_features=self.params['N_h3'], out_features=N_out)
+        )
 
-        self.fc1 = nn.Linear(in_features=N_input, out_features=N_h1)
-        self.fc2 = nn.Linear(in_features=N_h1, out_features=N_h2)
-        self.fc3 = nn.Linear(in_features=N_h2, out_features=N_h3)
-        self.out = nn.Linear(in_features=N_h3, out_features=N_out)
-        self.act = nn.Sigmoid()
-
+        #Initializes weights upon instantiation according to Glorot framework
+        self.reset_weights()
+        self.history = dict()
     def forward(self, x):
+        return self.model(x)
 
-        x = self.act(self.fc1(x))
-        x = self.act(self.fc2(x))
-        x = self.act(self.fc3(x))
-        x = self.out(x)
-        return x
+    def reset_weights(self):
+        self.model.apply(self.init_weights)
+
+    def init_weights(self, m):
+        if isinstance(m, nn.Linear):
+            nn.init.xavier_uniform_(m.weight)
+            nn.init.zeros_(m.bias)

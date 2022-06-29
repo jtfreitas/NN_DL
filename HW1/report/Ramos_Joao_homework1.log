@@ -1,11 +1,11 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.1) (preloaded format=pdflatex 2022.3.14)  21 APR 2022 23:13
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.1) (preloaded format=pdflatex 2022.6.22)  29 JUN 2022 22:44
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **./Ramos_Joao_homework1.tex
 (Ramos_Joao_homework1.tex
 LaTeX2e <2021-11-15> patch level 1
-L3 programming layer <2022-02-05>
+L3 programming layer <2022-04-20>
 (/home/jtfreitas/.miktex/texmfs/install/tex/latex/base/article.cls
 Document Class: article 2021/10/04 v1.4n Standard LaTeX document class
 (/home/jtfreitas/.miktex/texmfs/install/tex/latex/base/size11.clo
@@ -123,17 +123,18 @@ Package: verbatim 2020-07-07 v1.5u LaTeX2e package for verbatim enhancements
 Package: subfig 2005/06/28 ver: 1.3 subfig package
 
 (/home/jtfreitas/.miktex/texmfs/install/tex/latex/caption/caption.sty
-Package: caption 2020/10/26 v3.5g Customizing captions (AR)
+Package: caption 2022/03/01 v3.6b Customizing captions (AR)
 
 (/home/jtfreitas/.miktex/texmfs/install/tex/latex/caption/caption3.sty
-Package: caption3 2020/10/21 v2.2e caption3 kernel (AR)
-\captionmargin=\dimen164
-\captionmargin@=\dimen165
-\captionwidth=\dimen166
-\caption@tempdima=\dimen167
-\caption@indent=\dimen168
-\caption@parindent=\dimen169
-\caption@hangindent=\dimen170
+Package: caption3 2022/03/17 v2.3b caption3 kernel (AR)
+\caption@tempdima=\dimen164
+\captionmargin=\dimen165
+\caption@leftmargin=\dimen166
+\caption@rightmargin=\dimen167
+\caption@width=\dimen168
+\caption@indent=\dimen169
+\caption@parindent=\dimen170
+\caption@hangindent=\dimen171
 Package caption Info: Standard document class detected.
 )
 \c@caption@flags=\count266
@@ -141,7 +142,7 @@ Package caption Info: Standard document class detected.
 )
 \c@KVtest=\count268
 \sf@farskip=\skip55
-\sf@captopadj=\dimen171
+\sf@captopadj=\dimen172
 \sf@capskip=\skip56
 \sf@nearskip=\skip57
 \c@subfigure=\count269
@@ -153,18 +154,95 @@ Package caption Info: Standard document class detected.
 \sf@top=\skip58
 \sf@bottom=\skip59
 )
+(/home/jtfreitas/.miktex/texmfs/install/tex/latex/tools/multicol.sty
+Package: multicol 2021/10/28 v1.9b multicolumn formatting (FMi)
+\c@tracingmulticols=\count275
+\mult@box=\box52
+\multicol@leftmargin=\dimen173
+\c@unbalance=\count276
+\c@collectmore=\count277
+\doublecol@number=\count278
+\multicoltolerance=\count279
+\multicolpretolerance=\count280
+\full@width=\dimen174
+\page@free=\dimen175
+\premulticols=\dimen176
+\postmulticols=\dimen177
+\multicolsep=\skip60
+\multicolbaselineskip=\skip61
+\partial@page=\box53
+\last@line=\box54
+\maxbalancingoverflow=\dimen178
+\mult@rightbox=\box55
+\mult@grightbox=\box56
+\mult@firstbox=\box57
+\mult@gfirstbox=\box58
+\@tempa=\box59
+\@tempa=\box60
+\@tempa=\box61
+\@tempa=\box62
+\@tempa=\box63
+\@tempa=\box64
+\@tempa=\box65
+\@tempa=\box66
+\@tempa=\box67
+\@tempa=\box68
+\@tempa=\box69
+\@tempa=\box70
+\@tempa=\box71
+\@tempa=\box72
+\@tempa=\box73
+\@tempa=\box74
+\@tempa=\box75
+\@tempa=\box76
+\@tempa=\box77
+\@tempa=\box78
+\@tempa=\box79
+\@tempa=\box80
+\@tempa=\box81
+\@tempa=\box82
+\@tempa=\box83
+\@tempa=\box84
+\@tempa=\box85
+\@tempa=\box86
+\@tempa=\box87
+\@tempa=\box88
+\@tempa=\box89
+\@tempa=\box90
+\@tempa=\box91
+\@tempa=\box92
+\@tempa=\box93
+\@tempa=\box94
+\c@minrows=\count281
+\c@columnbadness=\count282
+\c@finalcolumnbadness=\count283
+\last@try=\dimen179
+\multicolovershoot=\dimen180
+\multicolundershoot=\dimen181
+\mult@nat@firstbox=\box95
+\colbreak@box=\box96
+\mc@col@check@num=\count284
+)
+(/home/jtfreitas/.miktex/texmfs/install/tex/latex/wrapfig/wrapfig.sty
+\wrapoverhang=\dimen182
+\WF@size=\dimen183
+\c@WF@wrappedlines=\count285
+\WF@box=\box97
+\WF@everypar=\toks24
+Package: wrapfig 2003/01/31  v 3.6
+)
 (/home/jtfreitas/.miktex/texmfs/install/tex/latex/fancyhdr/fancyhdr.sty
 Package: fancyhdr 2021/01/28 v4.0.1 Extensive control of page headers and foote
 rs
-\f@nch@headwidth=\skip60
-\f@nch@O@elh=\skip61
-\f@nch@O@erh=\skip62
-\f@nch@O@olh=\skip63
-\f@nch@O@orh=\skip64
-\f@nch@O@elf=\skip65
-\f@nch@O@erf=\skip66
-\f@nch@O@olf=\skip67
-\f@nch@O@orf=\skip68
+\f@nch@headwidth=\skip62
+\f@nch@O@elh=\skip63
+\f@nch@O@erh=\skip64
+\f@nch@O@olh=\skip65
+\f@nch@O@orh=\skip66
+\f@nch@O@elf=\skip67
+\f@nch@O@erf=\skip68
+\f@nch@O@olf=\skip69
+\f@nch@O@orf=\skip70
 )
 (/home/jtfreitas/.miktex/texmfs/install/tex/latex/sectsty/sectsty.sty
 Package: sectsty 2002/02/25 v2.0.2 Commands to change all sectional heading sty
@@ -188,66 +266,66 @@ Package tocbibind Note: Using section or other style headings.
 ) (/home/jtfreitas/.miktex/texmfs/install/tex/latex/tocloft/tocloft.sty
 Package: tocloft 2017/08/31 v2.3i parameterised ToC, etc., typesetting
 Package tocloft Info: The document has section divisions on input line 51.
-\cftparskip=\skip69
-\cftbeforetoctitleskip=\skip70
-\cftaftertoctitleskip=\skip71
-\cftbeforepartskip=\skip72
-\cftpartnumwidth=\skip73
-\cftpartindent=\skip74
-\cftbeforesecskip=\skip75
-\cftsecindent=\skip76
-\cftsecnumwidth=\skip77
-\cftbeforesubsecskip=\skip78
-\cftsubsecindent=\skip79
-\cftsubsecnumwidth=\skip80
-\cftbeforesubsubsecskip=\skip81
-\cftsubsubsecindent=\skip82
-\cftsubsubsecnumwidth=\skip83
-\cftbeforeparaskip=\skip84
-\cftparaindent=\skip85
-\cftparanumwidth=\skip86
-\cftbeforesubparaskip=\skip87
-\cftsubparaindent=\skip88
-\cftsubparanumwidth=\skip89
-\cftbeforeloftitleskip=\skip90
-\cftafterloftitleskip=\skip91
-\cftbeforefigskip=\skip92
-\cftfigindent=\skip93
-\cftfignumwidth=\skip94
-\cftbeforelottitleskip=\skip95
-\cftafterlottitleskip=\skip96
-\cftbeforetabskip=\skip97
-\cfttabindent=\skip98
-\cfttabnumwidth=\skip99
-\cftbeforesubfigskip=\skip100
-\cftsubfigindent=\skip101
-\cftsubfignumwidth=\skip102
-\cftbeforesubtabskip=\skip103
-\cftsubtabindent=\skip104
-\cftsubtabnumwidth=\skip105
+\cftparskip=\skip71
+\cftbeforetoctitleskip=\skip72
+\cftaftertoctitleskip=\skip73
+\cftbeforepartskip=\skip74
+\cftpartnumwidth=\skip75
+\cftpartindent=\skip76
+\cftbeforesecskip=\skip77
+\cftsecindent=\skip78
+\cftsecnumwidth=\skip79
+\cftbeforesubsecskip=\skip80
+\cftsubsecindent=\skip81
+\cftsubsecnumwidth=\skip82
+\cftbeforesubsubsecskip=\skip83
+\cftsubsubsecindent=\skip84
+\cftsubsubsecnumwidth=\skip85
+\cftbeforeparaskip=\skip86
+\cftparaindent=\skip87
+\cftparanumwidth=\skip88
+\cftbeforesubparaskip=\skip89
+\cftsubparaindent=\skip90
+\cftsubparanumwidth=\skip91
+\cftbeforeloftitleskip=\skip92
+\cftafterloftitleskip=\skip93
+\cftbeforefigskip=\skip94
+\cftfigindent=\skip95
+\cftfignumwidth=\skip96
+\cftbeforelottitleskip=\skip97
+\cftafterlottitleskip=\skip98
+\cftbeforetabskip=\skip99
+\cfttabindent=\skip100
+\cfttabnumwidth=\skip101
+\cftbeforesubfigskip=\skip102
+\cftsubfigindent=\skip103
+\cftsubfignumwidth=\skip104
+\cftbeforesubtabskip=\skip105
+\cftsubtabindent=\skip106
+\cftsubtabnumwidth=\skip107
 )
 (/home/jtfreitas/.miktex/texmfs/install/tex/latex/l3backend/l3backend-pdftex.de
 f
-File: l3backend-pdftex.def 2022-02-07 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count275
-\l__pdf_internal_box=\box52
+File: l3backend-pdftex.def 2022-04-20 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count286
+\l__pdf_internal_box=\box98
 ) (Ramos_Joao_homework1.aux)
 \openout1 = `Ramos_Joao_homework1.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 65.
+LaTeX Font Info:    ... okay on input line 65.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 65.
+LaTeX Font Info:    ... okay on input line 65.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 65.
+LaTeX Font Info:    ... okay on input line 65.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 65.
+LaTeX Font Info:    ... okay on input line 65.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 65.
+LaTeX Font Info:    ... okay on input line 65.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 65.
+LaTeX Font Info:    ... okay on input line 65.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 65.
+LaTeX Font Info:    ... okay on input line 65.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -285,17 +363,17 @@ LaTeX Font Info:    ... okay on input line 61.
 
 (/home/jtfreitas/.miktex/texmfs/install/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count276
-\scratchdimen=\dimen172
-\scratchbox=\box53
-\nofMPsegments=\count277
-\nofMParguments=\count278
-\everyMPshowfont=\toks24
-\MPscratchCnt=\count279
-\MPscratchDim=\dimen173
-\MPnumerator=\count280
-\makeMPintoPDFobject=\count281
-\everyMPtoPDFconversion=\toks25
+\scratchcounter=\count287
+\scratchdimen=\dimen184
+\scratchbox=\box99
+\nofMPsegments=\count288
+\nofMParguments=\count289
+\everyMPshowfont=\toks25
+\MPscratchCnt=\count290
+\MPscratchDim=\dimen185
+\MPnumerator=\count291
+\makeMPintoPDFobject=\count292
+\everyMPtoPDFconversion=\toks26
 )
 (/home/jtfreitas/.miktex/texmfs/install/tex/latex/epstopdf-pkg/epstopdf-base.st
 y
@@ -337,34 +415,71 @@ File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: subfig package v1.3 is loaded.
+Package caption Info: wrapfig package is loaded.
 Package caption Info: End \AtBeginDocument code.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 62.
+(Font)              <12> on input line 66.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 62.
+(Font)              <8> on input line 66.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 62.
+(Font)              <6> on input line 66.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <10.95> on input line 73.
+
+Underfull \hbox (badness 10000) in paragraph at lines 73--74
+
+ []
 
 [1
 
 {/home/jtfreitas/.miktex/texmfs/data/fonts/map/pdftex/pdftex.map}]
-(Ramos_Joao_homework1.aux) ) 
+Underfull \hbox (badness 10000) in paragraph at lines 81--82
+
+ []
+
+<res/fig0.pdf, id=15, 527.08919pt x 376.52669pt>
+File: res/fig0.pdf Graphic file (type pdf)
+<use res/fig0.pdf>
+Package pdftex.def Info: res/fig0.pdf  used on input line 86.
+(pdftex.def)             Requested size: 204.12683pt x 145.81639pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 89--90
+
+ []
+
+<res/fig4.pdf, id=16, 527.08919pt x 376.52669pt>
+File: res/fig4.pdf Graphic file (type pdf)
+<use res/fig4.pdf>
+Package pdftex.def Info: res/fig4.pdf  used on input line 109.
+(pdftex.def)             Requested size: 204.12683pt x 145.81639pt.
+[2 <./res/fig0.pdf>]
+Underfull \hbox (badness 10000) in paragraph at lines 117--119
+
+ []
+
+[3 <./res/fig4.pdf>] (Ramos_Joao_homework1.aux) ) 
 Here is how much of TeX's memory you used:
- 4804 strings out of 478585
- 85813 string characters out of 2847273
- 378666 words of memory out of 3000000
- 22943 multiletter control sequences out of 15000+600000
- 474708 words of font info for 46 fonts, out of 8000000 for 9000
+ 5121 strings out of 478548
+ 91457 string characters out of 2844707
+ 394831 words of memory out of 3000000
+ 23286 multiletter control sequences out of 15000+600000
+ 475632 words of font info for 49 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 69i,7n,79p,241b,187s stack positions out of 5000i,500n,10000p,200000b,80000s
-</home/jtfreitas/.miktex/texmfs/install/fonts/type1
-/public/amsfonts/cm/cmr10.pfb></home/jtfreitas/.miktex/texmfs/install/fonts/typ
-e1/public/amsfonts/cm/cmr12.pfb></home/jtfreitas/.miktex/texmfs/install/fonts/t
-ype1/public/amsfonts/cm/cmr17.pfb></home/jtfreitas/.miktex/texmfs/install/fonts
-/type1/public/amsfonts/cm/cmss12.pfb>
-Output written on Ramos_Joao_homework1.pdf (1 page, 52257 bytes).
+ 69i,11n,79p,1198b,351s stack positions out of 10000i,1000n,20000p,200000b,80000s
+</home/jtfreitas/.miktex/texmf
+s/install/fonts/type1/public/amsfonts/cm/cmbx10.pfb></home/jtfreitas/.miktex/te
+xmfs/install/fonts/type1/public/amsfonts/cm/cmex10.pfb></home/jtfreitas/.miktex
+/texmfs/install/fonts/type1/public/amsfonts/cm/cmmi10.pfb></home/jtfreitas/.mik
+tex/texmfs/install/fonts/type1/public/amsfonts/cm/cmmi8.pfb></home/jtfreitas/.m
+iktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmr10.pfb></home/jtfreitas/
+.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmr12.pfb></home/jtfreita
+s/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmr17.pfb></home/jtfrei
+tas/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmr8.pfb></home/jtfre
+itas/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmss12.pfb></home/jt
+freitas/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
+Output written on Ramos_Joao_homework1.pdf (3 pages, 158387 bytes).
 PDF statistics:
- 26 PDF objects out of 1000 (max. 8388607)
+ 82 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 11 words of extra memory for PDF output out of 10000 (max. 10000000)
 
