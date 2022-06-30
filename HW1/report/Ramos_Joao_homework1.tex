@@ -89,6 +89,7 @@ A fully-connected neural network is implemented to learn the functional behavior
 \noindent The gaps in the training data will likely be the main drivers of the model's validation loss. Because of that, a combination of regularization techniques will be implemented.\\
 
 \noindent The adequate model architecture was determined by a preliminary random search. This involved randomly sampling 50 architectures. The structure was kept constant: three hidden layers, each with associated neuron drop-out. Each model was preliminarily trained over 200 epochs. The number of neurons in each hidden layer, along with the activation function, optimizer type and respective learning rate were all randomly sampled according to Optuna's TPESampler. This sampler starts out with uniform sampling of hyperparameters, becoming increasingly sensitive to the prior models tested as the grid-search progresses. This strategy offers an adequate compromise between the computationally exhaustive classic grid-search and a completely random search. Naturally, this faces an issue that is quite similar to vanishing gradients: the sampler might keep generating similar architectures that yield loss close to a local minimum, while missing other configurations that could, in theory, perform better. Unfortunately, the nature of the TPESampler means this issue is inevitable. The best preliminary architecture had the following parameters:\\
+
 \begin{Table}
 \centering
 \begin{tabular}{c|c}
@@ -100,14 +101,13 @@ Dropout \quad & \quad 0.019\\
 Optimizer \quad & \quad Adam\\
 \end{tabular}
 \end{Table}
-\squeezeup
 
-A new model with these parameters is initialized. The network weights are initialized according to the Glorot scheme.
+\noindent A new model with these parameters is then initialized with the Glorot scheme.
 \subsection{Results}
 Upon finding a set of best parameters, the model was reinstantiated with those, and trained using K-fold cross-validation, with 5 folds of the training data. Each training was performed over 400 epochs. 
 
 \begin{Figure}
-	\includegraphics[width=\linewidth]{res/fig4.pdf}
+	\includegraphics[width=\linewidth]{res/newplot.png}
 \end{Figure}
 %%%%%%%%%%%%%HERE
 

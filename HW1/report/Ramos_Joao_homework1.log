@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.1) (preloaded format=pdflatex 2022.6.22)  29 JUN 2022 22:44
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.1) (preloaded format=pdflatex 2022.6.22)  30 JUN 2022 11:12
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -447,39 +447,44 @@ Underfull \hbox (badness 10000) in paragraph at lines 89--90
 
  []
 
-<res/fig4.pdf, id=16, 527.08919pt x 376.52669pt>
-File: res/fig4.pdf Graphic file (type pdf)
-<use res/fig4.pdf>
-Package pdftex.def Info: res/fig4.pdf  used on input line 109.
-(pdftex.def)             Requested size: 204.12683pt x 145.81639pt.
-[2 <./res/fig0.pdf>]
-Underfull \hbox (badness 10000) in paragraph at lines 117--119
+
+Underfull \hbox (badness 10000) in paragraph at lines 91--92
 
  []
 
-[3 <./res/fig4.pdf>] (Ramos_Joao_homework1.aux) ) 
+<res/newplot.png, id=16, 702.625pt x 501.875pt>
+File: res/newplot.png Graphic file (type png)
+<use res/newplot.png>
+Package pdftex.def Info: res/newplot.png  used on input line 110.
+(pdftex.def)             Requested size: 204.12683pt x 145.80038pt.
+[2 <./res/fig0.pdf>]
+Underfull \hbox (badness 10000) in paragraph at lines 118--120
+
+ []
+
+[3 <./res/newplot.png>] (Ramos_Joao_homework1.aux) ) 
 Here is how much of TeX's memory you used:
- 5121 strings out of 478548
- 91457 string characters out of 2844707
- 394831 words of memory out of 3000000
+ 5122 strings out of 478548
+ 91458 string characters out of 2844707
+ 394840 words of memory out of 3000000
  23286 multiletter control sequences out of 15000+600000
  475632 words of font info for 49 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  69i,11n,79p,1198b,351s stack positions out of 10000i,1000n,20000p,200000b,80000s
-</home/jtfreitas/.miktex/texmf
-s/install/fonts/type1/public/amsfonts/cm/cmbx10.pfb></home/jtfreitas/.miktex/te
-xmfs/install/fonts/type1/public/amsfonts/cm/cmex10.pfb></home/jtfreitas/.miktex
-/texmfs/install/fonts/type1/public/amsfonts/cm/cmmi10.pfb></home/jtfreitas/.mik
-tex/texmfs/install/fonts/type1/public/amsfonts/cm/cmmi8.pfb></home/jtfreitas/.m
-iktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmr10.pfb></home/jtfreitas/
-.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmr12.pfb></home/jtfreita
-s/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmr17.pfb></home/jtfrei
-tas/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmr8.pfb></home/jtfre
-itas/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmss12.pfb></home/jt
-freitas/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on Ramos_Joao_homework1.pdf (3 pages, 158387 bytes).
+</home/jtfreitas/.miktex/te
+xmfs/install/fonts/type1/public/amsfonts/cm/cmbx10.pfb></home/jtfreitas/.miktex
+/texmfs/install/fonts/type1/public/amsfonts/cm/cmex10.pfb></home/jtfreitas/.mik
+tex/texmfs/install/fonts/type1/public/amsfonts/cm/cmmi10.pfb></home/jtfreitas/.
+miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmmi8.pfb></home/jtfreitas
+/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmr10.pfb></home/jtfreit
+as/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmr12.pfb></home/jtfre
+itas/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmr17.pfb></home/jtf
+reitas/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmr8.pfb></home/jt
+freitas/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmss12.pfb></home
+/jtfreitas/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
+Output written on Ramos_Joao_homework1.pdf (3 pages, 174879 bytes).
 PDF statistics:
- 82 PDF objects out of 1000 (max. 8388607)
+ 74 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  11 words of extra memory for PDF output out of 10000 (max. 10000000)
 
