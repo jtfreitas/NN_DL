@@ -194,13 +194,14 @@ def test_epoch(autoencoder, device, dataloader, loss_fn):
 # Training cycle
 
 
-def train_AE(autoencoder, num_epochs, train_dataloader, loss_fn, optim, device, test_dataloader=None, save_dir=None, verbose=True):
+def train_AE(autoencoder, num_epochs, train_dataloader, loss_fn, optim, device,
+         test_dataloader=None, save_dir=None, verbose=True):
     """
     Trains autoencoder model. 
     """
     
     if autoencoder.keep_loss:
-        autoencoder.loss_history['training'] = [*autoencoder.loss_history['training'], *[0]*num_epochs]
+        autoencoder.loss_history['training'] = [*autoencoder.loss_history['training'],*[0]*num_epochs]
         if test_dataloader != None:
             autoencoder.loss_history['validation'] = [*autoencoder.loss_history['validation'], *[0]*num_epochs]
             
@@ -498,3 +499,118 @@ def train_GAN(gan, train_dataloader,num_epochs,
         return loss_history, img_list
     else:
         return loss_history
+
+
+class Classifier(nn.Module):
+    def __init__(self, params, device):
+        super(Classifier, self).__init__()
+        self.device = device
+        self.net = nn.Sequential(
+            nn.Linear(*params['lin1']),
+            nn.Dropout(0.3),
+            nn.ReLU(inplace=True),
+            nn.Linear(*params['lin2']),
+            nn.Dropout(0.3),
+            nn.ReLU(inplace=True),
+            nn.Linear(*params['lin3']),
+            nn.Dropout(0.3),
+            nn.ReLU(inplace=True),
+            nn.Linear(*params['lin4'])
+        )
+        self.reset_weights()
+
+    def forward(self, x):
+        return self.net(x)
+
+    def predict(self, x):
+        return nn.Softmax(dim=1)(self.forward(x))
+
+    def create_history(self, num_epochs):
+       self.history = dict(
+        train=np.zeros(num_epochs),
+        valid=np.zeros(num_epochs),
+        epoch=np.arange(1,num_epochs+1))
+
+
+    def reset_weights(self):
+        self.net.apply(self.init_weights)
+
+    def init_weights(self, m):
+        if isinstance(m, nn.Linear):
+            nn.init.xavier_uniform_(m.weight)
+            nn.init.zeros_(m.bias)
+
+
+
+
+def train_model(model, train_loader, val_loader, num_epochs, loss_fn, optimizer,
+                AE = None, verbose=True):
+                
+    model.create_history(num_epochs)
+    train_loss_log = np.zeros(num_epochs)
+    val_loss_log = np.zeros(num_epochs)
+    for epoch_num in range(num_epochs):
+        train_loss = train_step(model, train_loader, loss_fn, optimizer, AE)
+        train_loss_log[epoch_num] = train_loss
+        
+        val_loss = evaluate(model, val_loader, loss_fn, AE, verbose=verbose)
+        if verbose:
+            print(
+                f"Epoch: {epoch_num+1} >>> Training loss: {train_loss:.5f} | Validation loss: {val_loss:.5f}", end='\r')
+        val_loss_log[epoch_num] = val_loss
+    return val_loss_log[-1]
+
+def train_step(model, dataloader, loss_fn, optimizer, AE):
+    train_loss = []
+    model.train()  # Training mode (e.g. enable dropout, batchnorm updates,...)
+    for sample_batched in dataloader:
+        # Move data to device
+        x_batch = sample_batched[0].to(model.device)
+        label_batch = sample_batched[1].to(model.device)
+
+        # Forward pass
+        if AE != None:
+            x_latent = AE.encoder(x_batch)
+            out = model(x_latent)
+        else:
+            x_batch= x_batch.flatten(start_dim=1)
+            out = model(x_batch)
+
+        # Compute loss
+        loss = loss_fn(out, label_batch)
+
+        # Backpropagation
+        optimizer.zero_grad()
+        loss.backward()
+
+        # Update the weights
+        optimizer.step()
+
+        # Save train loss for this batch
+        loss_batch = loss.detach().cpu().numpy()
+        train_loss.append(loss_batch)
+
+    train_loss = np.mean(train_loss)
+    return train_loss
+
+def evaluate(model, dataloader, loss_fn, AE, verbose=True):
+    model.eval()
+    data_loss = []
+    with torch.no_grad():
+        for sample_batched in dataloader:
+            x_batch = sample_batched[0].to(model.device)
+            label_batch = sample_batched[1].to(model.device)
+            if AE != None:
+                x_latent = AE.encoder(x_batch)
+                out = model(x_latent)
+            else:
+                x_batch = x_batch.flatten(start_dim=1)
+                out = model(x_batch)
+            loss = loss_fn(out, label_batch)
+            loss_batch = loss.detach().cpu().numpy()
+            data_loss.append(loss_batch)
+
+        data_loss = np.mean(data_loss)
+        if verbose:
+            print(f"Loss = {data_loss:.5f}")
+        return data_loss
