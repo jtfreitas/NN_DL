@@ -159,7 +159,7 @@ def train_epoch(autoencoder, device, dataloader, loss_fn, optimizer, verbose):
         # Print batch loss
         if verbose:
             print(
-                f'\rpartial train loss (single batch): {loss.data:4f}', end='')
+                f'\rpartial train loss (single batch): {loss.data:4f}', end=' ')
     if verbose:
         print(
             f'partial train loss (single batch): {loss.data:4f}', end='\t')
@@ -558,6 +558,10 @@ def train_model(model, train_loader, val_loader, num_epochs, loss_fn, optimizer,
             print(
                 f"Epoch: {epoch_num+1} >>> Training loss: {train_loss:.5f} | Validation loss: {val_loss:.5f}", end='\r')
         val_loss_log[epoch_num] = val_loss
+
+    model.history['train'] = train_loss_log
+    model.history['valid'] = val_loss_log
+    
     return val_loss_log[-1]
 
 def train_step(model, dataloader, loss_fn, optimizer, AE):
