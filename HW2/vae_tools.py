@@ -2,8 +2,9 @@ import os
 import torch
 import torch.nn as nn
 import torch.backends.cudnn as cudnn
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, ConcatDataset, Subset
 from torchvision import utils as vutils
+from copy import deepcopy
 import tqdm
 import random
 import numpy as np
@@ -15,34 +16,43 @@ from faulthandler import disable
 
 class Encoder(nn.Module):
 
-    def __init__(self, n, params):
+    def __init__(self, conv_out, params, init_weight=None):
         super().__init__()
-
+        self.init_weight = init_weight
         self.encoder_cnn = nn.Sequential(
-            nn.Conv2d(in_channels=1, out_channels=params['conv1']['filters'],
-                      kernel_size=params['conv1']['kernel'],
-                      stride=params['conv1']['stride'],
-                      padding=params['conv1']['padding']),
+            nn.Conv2d(
+                in_channels=1, 
+                out_channels=params['conv1']['filters'],
+                kernel_size=params['conv1']['kernel'],
+                stride=params['conv1']['stride'],
+                padding=params['conv1']['padding']),
             nn.ReLU(inplace=True),
-            nn.Conv2d(in_channels=params['conv1']['filters'], out_channels=params['conv2']['filters'],
-                      kernel_size=params['conv2']['kernel'],
-                      stride=params['conv2']['stride'],
-                      padding=params['conv2']['padding']),
+            nn.Conv2d(
+                in_channels=params['conv1']['filters'],
+                out_channels=params['conv2']['filters'],
+                kernel_size=params['conv2']['kernel'],
+                stride=params['conv2']['stride'],
+                padding=params['conv2']['padding']),
             nn.ReLU(inplace=True),
-            nn.Conv2d(in_channels=params['conv2']['filters'], out_channels=params['conv3']['filters'],
-                      kernel_size=params['conv3']['kernel'],
-                      stride=params['conv3']['stride'],
-                      padding=params['conv3']['padding']),
+            nn.Conv2d(
+                in_channels=params['conv2']['filters'],
+                out_channels=params['conv3']['filters'],
+                kernel_size=params['conv3']['kernel'],
+                stride=params['conv3']['stride'],
+                padding=params['conv3']['padding']),
             nn.ReLU(inplace=True)
         )
 
         self.flatten = nn.Flatten(start_dim=1)
 
         self.encoder_lin = nn.Sequential(
-            nn.Linear(in_features=n, out_features=params['lin1']),
+            nn.Linear(
+                in_features=np.prod(conv_out),
+                out_features=params['lin1']),
             nn.ReLU(inplace=True),
-            nn.Linear(in_features=params['lin1'],
-                      out_features=params['latent_space'])
+            nn.Linear(
+                in_features=params['lin1'],
+                out_features=params['latent_space'])
         )
 
     def forward(self, x):
@@ -51,17 +61,14 @@ class Encoder(nn.Module):
         x = self.encoder_lin(x)
         return x
 
-
 class Decoder(nn.Module):
 
-    # , conv1, conv2, conv3, lin1, n_side, encoded_space_dim):
-
-    def __init__(self, conv_neurons, n_side, params):
+    def __init__(self, conv_in, params, init_weight=None):
 
         super().__init__()  # conv1, conv2, conv3, lin1, n_side, encoded_space_dim
 
         # Linear section
-
+        self.init_weight = init_weight
         self.decoder_lin = nn.Sequential(
             # First linear layer
             nn.Linear(in_features=params['latent_space'],
@@ -69,34 +76,38 @@ class Decoder(nn.Module):
             nn.ReLU(inplace=True),
             # Second linear layer
             nn.Linear(in_features=params['lin1'],
-                      out_features=conv_neurons),
+                      out_features=np.prod(conv_in)),
             nn.ReLU(inplace=True)
         )
         # Unflatten
-        self.unflatten = nn.Unflatten(dim=-1, unflattened_size=(
-            params['conv3']['filters'], n_side, n_side)
-        )
+        self.unflatten = nn.Unflatten(dim=-1, unflattened_size=conv_in)
         # Convolutional section
         self.decoder_conv = nn.Sequential(
             # First transposed convolution
-            nn.ConvTranspose2d(in_channels=params['conv3']['filters'], out_channels=params['conv2']['filters'],
-                               kernel_size=params['conv2']['kernel'],
-                               stride=params['conv2']['stride'],
-                               output_padding=params['conv3']['padding']),
+            nn.ConvTranspose2d(
+                in_channels=params['conv3']['filters'],
+                out_channels=params['conv2']['filters'],
+                kernel_size=params['conv2']['kernel'],
+                stride=params['conv2']['stride'],
+                output_padding=params['conv3']['padding']),
             nn.ReLU(True),
             # Second transposed convolution
-            nn.ConvTranspose2d(in_channels=params['conv2']['filters'], out_channels=params['conv1']['filters'],
-                               kernel_size=params['conv1']['kernel'],
-                               stride=params['conv2']['stride'],
-                               padding=params['conv2']['padding'],
-                               output_padding=params['conv2']['padding']),
+            nn.ConvTranspose2d(
+                in_channels=params['conv2']['filters'],
+                out_channels=params['conv1']['filters'],
+                kernel_size=params['conv1']['kernel'],
+                stride=params['conv2']['stride'],
+                padding=params['conv2']['padding'],
+                output_padding=params['conv2']['padding']),
             nn.ReLU(True),
             # Third transposed convolution
-            nn.ConvTranspose2d(in_channels=params['conv1']['filters'], out_channels=1,
-                               kernel_size=params['conv1']['kernel'],
-                               stride=params['conv1']['stride'],
-                               padding=params['conv1']['padding'],
-                               output_padding=params['conv1']['padding'])
+            nn.ConvTranspose2d(
+                in_channels=params['conv1']['filters'],
+                out_channels=1,
+                kernel_size=params['conv1']['kernel'],
+                stride=params['conv1']['stride'],
+                padding=params['conv1']['padding'],
+                output_padding=params['conv1']['padding'])
         )
 
     def forward(self, x):
@@ -110,42 +121,80 @@ class Decoder(nn.Module):
         x = torch.sigmoid(x)
         return x
 
-
 class Autoencoder(nn.Module):
 
-    def __init__(self, in_side, params, device, keep_loss = True):
+    def __init__(self, in_side, params, device, init_weight='normal'):
         super().__init__()
-        self.n_side1 = self.no_features(in_side, params['conv1'])
-        self.n_side2 = self.no_features(self.n_side1, params['conv2'])
-        self.n_side3 = self.no_features(self.n_side2, params['conv3'])
-        self.lin_neurs = self.n_side3**2 * params['conv3']['filters']
-        self.latent_space = params['latent_space']
-        self.decoder = Decoder(self.lin_neurs, self.n_side3, params)
-        self.encoder = Encoder(self.lin_neurs, params)
-        self.epochs_trained = 0
+        self.init_weight=init_weight
+        self.params = params
+        self.in_side = in_side
+        self.conv_out = (
+            self.params['conv3']['filters'],
+            self.no_features(params, in_side),
+            self.no_features(params, in_side)
+            )
+        self.latent_space = self.params['latent_space']
+        self.decoder = Decoder(self.conv_out, self.params)
+        self.encoder = Encoder(self.conv_out, self.params)
         self.device = device
         self.encoder.to(self.device)
         self.decoder.to(self.device)
-        self.keep_loss = keep_loss
-        if keep_loss:
-            self.loss_history = {'training': [], 'validation': []}
 
-    def no_features(self, n, conv):
-        n_out = (n - conv['kernel'] + 2 * conv['padding'])//conv['stride'] + 1
-        return n_out
+    def no_features(self, params, n):
+        for i in params.items():
+            if 'conv' in i[0]:
+                n = (n - i[1]['kernel'] + 2 * i[1]['padding'])//i[1]['stride'] + 1
+        return n
 
     def forward(self, x):
         latent_space = self.encoder(x)
         x = self.decoder(latent_space)
         return x
 
+    def create_history(self, num_epochs):
+        """
+        Creates history dict to store losses during training.
+        """
+        self.history = dict(
+            train=np.zeros(num_epochs),
+            valid=np.zeros(num_epochs),
+            epoch=np.arange(1,num_epochs+1)
+            )
+
+    def init_weights(self, m):
+        """
+        Initializes model weights according to Kaiming
+        normal or uniform schemes.
+        """
+        if self.init_weight == 'normal':
+            if isinstance(m, nn.Conv2d):
+                torch.nn.init.kaiming_normal_(m.weight)
+                m.bias.data.fill_(0.01)
+            elif isinstance(m, nn.Linear):
+                torch.nn.init.kaiming_normal_(m.weight)
+                m.bias.data.fill_(0.01)
+        elif self.init_weight == 'uniform':
+            if isinstance(m, nn.Conv2d):
+                torch.nn.init.kaiming_uniform_(m.weight)
+                m.bias.data.fill_(0.01)
+            elif isinstance(m, nn.Linear):
+                torch.nn.init.kaiming_uniform_(m.weight)
+                m.bias.data.fill_(0.01)
+            
+    def reset_weights(self):
+        """
+        Applies weight initialization on encoder and decoder
+        """
+        self.apply(self.init_weights)
+        # self.decoder.apply(init_weights)
+
 
 def train_epoch(autoencoder, device, dataloader, loss_fn, optimizer, verbose):
     # Set train mode for both the encoder and the decoder
     loss_fn.to(device)
-    autoencoder.train()
-    # Iterate the dataloader (we do not need the label values, this is unsupervised learning)
-    # with "_" we just ignore the labels (the second element of the dataloader tuple)
+    autoencoder.encoder.train()
+    autoencoder.decoder.train()
+    # Iterate over dataloader batches
     for image_batch, _ in dataloader:
         # Move tensor to the proper device
         image_batch = image_batch.to(device)
@@ -159,10 +208,7 @@ def train_epoch(autoencoder, device, dataloader, loss_fn, optimizer, verbose):
         # Print batch loss
         if verbose:
             print(
-                f'\rpartial train loss (single batch): {loss.data:4f}', end=' ')
-    if verbose:
-        print(
-            f'partial train loss (single batch): {loss.data:4f}', end='\t')
+                f'\rpartial train loss (single batch): {loss.data:.4f}', end=' ')
 
     return loss.data
 
@@ -171,7 +217,8 @@ def test_epoch(autoencoder, device, dataloader, loss_fn):
     # Set evaluation mode for encoder and decoder
     autoencoder.to(device)
     loss_fn.to(device)
-    autoencoder.eval()
+    autoencoder.encoder.eval()
+    autoencoder.decoder.eval()
     with torch.no_grad():  # No need to track the gradients
         # Define the lists to store the outputs for each batch
         conc_out = []
@@ -199,17 +246,12 @@ def train_AE(autoencoder, num_epochs, train_dataloader, loss_fn, optim, device,
     """
     Trains autoencoder model. 
     """
-    
-    if autoencoder.keep_loss:
-        autoencoder.loss_history['training'] = [*autoencoder.loss_history['training'],*[0]*num_epochs]
-        if test_dataloader != None:
-            autoencoder.loss_history['validation'] = [*autoencoder.loss_history['validation'], *[0]*num_epochs]
+    autoencoder.create_history(num_epochs)
             
     best_loss_train = 9999999.0
     if test_dataloader != None:
         best_loss_val = 9999999.0
     best_epoch = 0
-    epoch_zero = autoencoder.epochs_trained
 
     if save_dir != None:
         params_path = f'{save_dir}/params'
@@ -218,10 +260,10 @@ def train_AE(autoencoder, num_epochs, train_dataloader, loss_fn, optim, device,
         plots_path = f'{save_dir}/plots'
         os.makedirs(plots_path, exist_ok=True)
 
-    for epoch in range(epoch_zero, epoch_zero + num_epochs):
+    for epoch in range(num_epochs):
         if verbose:
             print(
-                f'EPOCH {epoch +1}/{epoch_zero + num_epochs} : ', end='\n')
+                f'EPOCH {epoch+1}/{num_epochs} : ', end='\n')
         # Training (use the training function)
         train_loss = train_epoch(
             autoencoder,
@@ -244,13 +286,10 @@ def train_AE(autoencoder, num_epochs, train_dataloader, loss_fn, optim, device,
                 print(f'Validation loss: {val_loss:4f}', end='\n')
 
         # Store losses in dict
-        if autoencoder.keep_loss:
-            autoencoder.loss_history['training'][epoch] = train_loss.item()
-            if test_dataloader != None:
-                autoencoder.loss_history['validation'][epoch] = val_loss.item()
+        autoencoder.history['train'][epoch] = train_loss.item()
+        if test_dataloader != None:
+            autoencoder.history['valid'][epoch] = val_loss.item()
 
-
-        autoencoder.epochs_trained += 1
         if test_dataloader != None:
             if val_loss.item() < best_loss_val:
                 best_epoch = epoch
@@ -290,6 +329,64 @@ def train_AE(autoencoder, num_epochs, train_dataloader, loss_fn, optim, device,
     else:
         return best_loss_train, best_epoch
 
+def CV_AE(k, autoencoder, num_epochs, train_loader, loss_fn, optim, device,
+         test_loader=None, save_dir=None, verbose=True):
+    """
+    Train the model using k-fold cross-validation.
+    """
+
+    # Split the dataset in k folds
+    samples_per_fold = train_loader.dataset.__len__() // k
+    subset_idxs = np.array([range(samples_per_fold*i, samples_per_fold*(i+1))
+        for i in range(k)])
+    fold_losses = np.zeros((2, k, num_epochs))
+    # Check the type of dataset used
+
+    train_set_folds = [Subset(train_loader.dataset, idx_set) for idx_set in subset_idxs]
+
+    model_fold = deepcopy(autoencoder)
+
+
+    # Create a copy of the optimizer to use on the fold model
+    fold_optim = optim.__class__(
+        model_fold.parameters(), lr=optim.param_groups[0]['lr'])
+
+    for fold in range(k):
+        print(f"Fold {fold+1}/{k}...", end='\t')
+        # Re-initialize the weights of the model
+        model_fold.reset_weights()
+        # Create a deepcopy of the folds to avoid modifying the original list
+        fold_copy = deepcopy(train_set_folds)
+        # pops the k-th fold to use for validation
+        valid_fold = DataLoader(fold_copy.pop(fold), batch_size = 1)
+        # makes training dataloader from the remaining folds
+        train_fold = DataLoader(ConcatDataset(fold_copy),
+                    batch_size=train_loader.batch_size, shuffle=True
+                            )
+
+        # Send the temporary model to the device
+        model_fold.to(model_fold.device)
+
+        # Train the model
+        train_AE(model_fold, num_epochs, train_fold,
+            loss_fn, fold_optim, model_fold.device,
+            test_dataloader = valid_fold, verbose=False)
+        fold_losses[0,fold] = model_fold.history['train']
+        fold_losses[1,fold] = model_fold.history['valid']
+        print("Done.")
+
+
+    autoencoder.create_history(num_epochs)
+    autoencoder.history['train'], autoencoder.history['valid'] = np.mean(fold_losses, axis=1)
+    
+    if test_loader != None:
+        test_loss = test_epoch(autoencoder, device, test_loader, loss_fn)
+        print(f"Loss on test set: {test_loss:.4f}")
+    if save_dir != None:
+        os.makedirs(f'{save_dir}', exist_ok=True)
+        torch.save(autoencoder.state_dict(),
+            f'{save_dir}/t={num_epochs+1}.pth')
+            
 
 def plot_inout(autoencoder, dataset, device, idx = None):
     if idx == None:
@@ -348,24 +445,32 @@ class Discriminator(nn.Module):
         super(Discriminator, self).__init__()
         self.conditional = conditional
         self.main = nn.Sequential(   # input is (1,28,28)
-                                  nn.Conv2d(in_channels=params['n_channels'], out_channels=params['D_filters'],
-                                            kernel_size=4, stride=2, padding=1),
-                                  nn.LeakyReLU(0.2, inplace=True),
-                                  # state size (D_filters, 14, 14)
-                                  nn.Conv2d(in_channels=params['D_filters'], out_channels=params['D_filters'] * 2,
-                                            kernel_size=4, stride=2, padding=1),
-                                  nn.BatchNorm2d(params['D_filters'] * 2),
-                                  nn.LeakyReLU(0.2, inplace=True),
-                                  # state size (D_filters*2, 7, 7)
-                                  nn.Conv2d(in_channels=params['D_filters'] * 2, out_channels=params['D_filters'] * 4,
-                                            kernel_size=4, stride=2, padding=1),
-                                  nn.BatchNorm2d(params['D_filters'] * 4),
-                                  nn.LeakyReLU(0.2, inplace=True),
-                                  # state size (D_filters*4, 3, 3)
-                                  nn.Conv2d(in_channels=params['D_filters'] * 4, out_channels=1,
-                                            kernel_size=4, stride=2, padding=1)
-                                  # scalar output (1, 1, 1)
-                                  )
+                        nn.Conv2d(
+                            in_channels=params['n_channels'],
+                            out_channels=params['D_filters'],
+                            kernel_size=4, stride=2, padding=1),
+                        nn.LeakyReLU(0.2, inplace=True),
+                        # state size (D_filters, 14, 14)
+                        nn.Conv2d(
+                            in_channels=params['D_filters'],
+                            out_channels=params['D_filters'] * 2,
+                            kernel_size=4, stride=2, padding=1),
+                        nn.BatchNorm2d(params['D_filters'] * 2),
+                        nn.LeakyReLU(0.2, inplace=True),
+                        # state size (D_filters*2, 7, 7)
+                        nn.Conv2d(
+                            in_channels=params['D_filters'] * 2,
+                            out_channels=params['D_filters'] * 4,
+                            kernel_size=4, stride=2, padding=1),
+                        nn.BatchNorm2d(params['D_filters'] * 4),
+                        nn.LeakyReLU(0.2, inplace=True),
+                        # state size (D_filters*4, 3, 3)
+                        nn.Conv2d(
+                            in_channels=params['D_filters'] * 4,
+                            out_channels=1,
+                            kernel_size=4, stride=2, padding=1)
+                        # scalar output (1, 1, 1)
+                        )
     def forward(self, input):
         return self.main(input)
 
@@ -379,8 +484,24 @@ class GAN(nn.Module):
         self.epochs_trained = 0
         self.device = device
         
-        self.optimizerD = getattr(torch.optim, params['opt'])([{'params': self.netD.parameters()},], lr=params['lr'])
-        self.optimizerG = getattr(torch.optim, params['opt'])([{'params': self.netG.parameters()},], lr=params['lr'])
+        self.optimizerD = getattr(torch.optim, params['opt'])(
+            [{'params': self.netD.parameters()},], lr=params['lr'])
+        self.optimizerG = getattr(torch.optim, params['opt'])(
+            [{'params': self.netG.parameters()},], lr=params['lr'])
+
+        self.reset_weights()
+
+    def reset_weights(self):
+        self.netD.apply(self.weights_init)
+        self.netG.apply(self.weights_init)
+
+    def weights_init(m):
+        classname = m.__class__.__name__
+        if classname.find('Conv') != -1:
+            nn.init.normal_(m.weight.data, 0.0, 0.02)
+        elif classname.find('BatchNorm') != -1:
+            nn.init.normal_(m.weight.data, 1.0, 0.02)
+            nn.init.constant_(m.bias.data, 0)
 
 def update_D(gan, data, criterion, device):
     """
@@ -618,3 +739,6 @@ def evaluate(model, dataloader, loss_fn, AE, verbose=True):
         if verbose:
             print(f"Loss = {data_loss:.5f}")
         return data_loss
+
+def RAM_used(tensor):
+    return tensor.element_size() * tensor.nelement()
