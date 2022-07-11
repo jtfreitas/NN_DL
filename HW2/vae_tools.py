@@ -46,12 +46,12 @@ class Encoder(nn.Module):
         self.flatten = nn.Flatten(start_dim=1)
 
         self.encoder_lin = nn.Sequential(
+            # nn.Linear(
+            #     in_features=np.prod(conv_out),
+            #     out_features=params['lin1']),
+            # nn.ReLU(inplace=True),
             nn.Linear(
-                in_features=np.prod(conv_out),
-                out_features=params['lin1']),
-            nn.ReLU(inplace=True),
-            nn.Linear(
-                in_features=params['lin1'],
+                in_features=np.prod(conv_out), #params['lin1'],
                 out_features=params['latent_space'])
         )
 
@@ -72,12 +72,12 @@ class Decoder(nn.Module):
         self.decoder_lin = nn.Sequential(
             # First linear layer
             nn.Linear(in_features=params['latent_space'],
-                      out_features=params['lin1']),
-            nn.ReLU(inplace=True),
-            # Second linear layer
-            nn.Linear(in_features=params['lin1'],
-                      out_features=np.prod(conv_in)),
+                      out_features=np.prod(conv_in)),#params['lin1']),
             nn.ReLU(inplace=True)
+            # Second linear layer
+            # nn.Linear(in_features=params['lin1'],
+            #           out_features=np.prod(conv_in)),
+            # nn.ReLU(inplace=True)
         )
         # Unflatten
         self.unflatten = nn.Unflatten(dim=-1, unflattened_size=conv_in)
@@ -248,10 +248,12 @@ def train_AE(autoencoder, num_epochs, train_dataloader, loss_fn, optim, device,
     """
     autoencoder.create_history(num_epochs)
             
+    # Initialize fake loss values for comparison
     best_loss_train = 9999999.0
     if test_dataloader != None:
         best_loss_val = 9999999.0
     best_epoch = 0
+    # This helps avoid storing nans in the training timeline
 
     if save_dir != None:
         params_path = f'{save_dir}/params'
@@ -302,10 +304,7 @@ def train_AE(autoencoder, num_epochs, train_dataloader, loss_fn, optim, device,
         if save_dir != None:
             # Plot progress
             # Get the output of a specific image (the test image at index 0 in this case)
-            try:
-                img = train_dataloader.dataset.data[0].unsqueeze(0).to(device)
-            except:
-                img = train_dataloader.dataset.dataset.data[0].unsqueeze(0).to(device)
+            img = train_dataloader.dataset[0][0].unsqueeze(0).to(device)
                 
             autoencoder.eval()
             #Update validation loss only if test_dataloader is provided
@@ -316,7 +315,7 @@ def train_AE(autoencoder, num_epochs, train_dataloader, loss_fn, optim, device,
             
             plt.ioff()
             fig, axs = plot_inout(autoencoder, train_dataloader.dataset, device, idx = 39)
-            fig.savefig(f'{plots_path}/t={epoch + 1}.jpg')
+            fig.savefig(f'{plots_path}/t={epoch}.jpg')
             plt.close()
     if verbose:
         if test_dataloader != None:        
@@ -330,9 +329,11 @@ def train_AE(autoencoder, num_epochs, train_dataloader, loss_fn, optim, device,
         return best_loss_train, best_epoch
 
 def CV_AE(k, autoencoder, num_epochs, train_loader, loss_fn, optim, device,
-         test_loader=None, save_dir=None, verbose=True):
+         test_loader=None, verbose=True):
     """
-    Train the model using k-fold cross-validation.
+    Validate the model using k-fold.
+    This is only used to attest for low variance of the model
+    in face of the data.
     """
 
     # Split the dataset in k folds
@@ -345,7 +346,6 @@ def CV_AE(k, autoencoder, num_epochs, train_loader, loss_fn, optim, device,
     train_set_folds = [Subset(train_loader.dataset, idx_set) for idx_set in subset_idxs]
 
     model_fold = deepcopy(autoencoder)
-
 
     # Create a copy of the optimizer to use on the fold model
     fold_optim = optim.__class__(
@@ -363,29 +363,19 @@ def CV_AE(k, autoencoder, num_epochs, train_loader, loss_fn, optim, device,
         train_fold = DataLoader(ConcatDataset(fold_copy),
                     batch_size=train_loader.batch_size, shuffle=True
                             )
-
         # Send the temporary model to the device
         model_fold.to(model_fold.device)
 
         # Train the model
         train_AE(model_fold, num_epochs, train_fold,
             loss_fn, fold_optim, model_fold.device,
-            test_dataloader = valid_fold, verbose=False)
+            test_dataloader = valid_fold, save_dir=None, verbose=False)
+
         fold_losses[0,fold] = model_fold.history['train']
         fold_losses[1,fold] = model_fold.history['valid']
         print("Done.")
 
-
-    autoencoder.create_history(num_epochs)
-    autoencoder.history['train'], autoencoder.history['valid'] = np.mean(fold_losses, axis=1)
-    
-    if test_loader != None:
-        test_loss = test_epoch(autoencoder, device, test_loader, loss_fn)
-        print(f"Loss on test set: {test_loss:.4f}")
-    if save_dir != None:
-        os.makedirs(f'{save_dir}', exist_ok=True)
-        torch.save(autoencoder.state_dict(),
-            f'{save_dir}/t={num_epochs+1}.pth')
+    return fold_losses
             
 
 def plot_inout(autoencoder, dataset, device, idx = None):
