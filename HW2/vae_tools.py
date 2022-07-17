@@ -379,6 +379,9 @@ def CV_AE(k, autoencoder, num_epochs, train_loader, loss_fn, optim, device,
             
 
 def plot_inout(autoencoder, dataset, device, idx = None):
+    """
+    Plot the input and output of the model.
+    """
     if idx == None:
         img, _ = dataset[random.randint(0, len(dataset))]
     else:
@@ -465,7 +468,16 @@ class Discriminator(nn.Module):
         return self.main(input)
 
 class GAN(nn.Module):
+    """
+    GAN model
+    """
     def __init__(self, params, device, conditional=False):
+        """
+        Initialize the model.
+        params: dictionary of parameters
+        device: torch.device
+        
+        """
         super(GAN, self).__init__()
         self.conditional = conditional
         self.latent_space = params['latent_space']
@@ -478,14 +490,16 @@ class GAN(nn.Module):
             [{'params': self.netD.parameters()},], lr=params['lr'])
         self.optimizerG = getattr(torch.optim, params['opt'])(
             [{'params': self.netG.parameters()},], lr=params['lr'])
-
         self.reset_weights()
 
     def reset_weights(self):
+        """
+        Reset the weights of the networks.
+        """
         self.netD.apply(self.weights_init)
         self.netG.apply(self.weights_init)
 
-    def weights_init(m):
+    def weights_init(self, m):
         classname = m.__class__.__name__
         if classname.find('Conv') != -1:
             nn.init.normal_(m.weight.data, 0.0, 0.02)
