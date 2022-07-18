@@ -1,7 +1,6 @@
 import os
 import torch
 import torch.nn as nn
-import torch.backends.cudnn as cudnn
 from torch.utils.data import DataLoader, ConcatDataset, Subset
 from torchvision import utils as vutils
 from copy import deepcopy
@@ -27,6 +26,7 @@ class Encoder(nn.Module):
                 stride=params['conv1']['stride'],
                 padding=params['conv1']['padding']),
             nn.ReLU(inplace=True),
+            nn.BatchNorm2d(params['conv1']['filters']),
             nn.Conv2d(
                 in_channels=params['conv1']['filters'],
                 out_channels=params['conv2']['filters'],
@@ -34,24 +34,26 @@ class Encoder(nn.Module):
                 stride=params['conv2']['stride'],
                 padding=params['conv2']['padding']),
             nn.ReLU(inplace=True),
+            nn.BatchNorm2d(params['conv2']['filters']),
             nn.Conv2d(
                 in_channels=params['conv2']['filters'],
                 out_channels=params['conv3']['filters'],
                 kernel_size=params['conv3']['kernel'],
                 stride=params['conv3']['stride'],
                 padding=params['conv3']['padding']),
-            nn.ReLU(inplace=True)
+            nn.ReLU(inplace=True),
+            nn.BatchNorm2d(params['conv3']['filters'])
         )
 
         self.flatten = nn.Flatten(start_dim=1)
 
         self.encoder_lin = nn.Sequential(
-            # nn.Linear(
-            #     in_features=np.prod(conv_out),
-            #     out_features=params['lin1']),
-            # nn.ReLU(inplace=True),
             nn.Linear(
-                in_features=np.prod(conv_out), #params['lin1'],
+                in_features=np.prod(conv_out),
+                out_features=params['lin1']),
+            nn.ReLU(inplace=True),
+            nn.Linear(
+                in_features=params['lin1'],
                 out_features=params['latent_space'])
         )
 
@@ -72,18 +74,19 @@ class Decoder(nn.Module):
         self.decoder_lin = nn.Sequential(
             # First linear layer
             nn.Linear(in_features=params['latent_space'],
-                      out_features=np.prod(conv_in)),#params['lin1']),
+                      out_features=params['lin1']),
+            nn.ReLU(inplace=True),
+            #Second linear layer
+            nn.Linear(in_features=params['lin1'],
+                      out_features=np.prod(conv_in)),
             nn.ReLU(inplace=True)
-            # Second linear layer
-            # nn.Linear(in_features=params['lin1'],
-            #           out_features=np.prod(conv_in)),
-            # nn.ReLU(inplace=True)
         )
         # Unflatten
         self.unflatten = nn.Unflatten(dim=-1, unflattened_size=conv_in)
         # Convolutional section
         self.decoder_conv = nn.Sequential(
             # First transposed convolution
+        nn.BatchNorm2d(params['conv3']['filters']),
             nn.ConvTranspose2d(
                 in_channels=params['conv3']['filters'],
                 out_channels=params['conv2']['filters'],
@@ -91,6 +94,7 @@ class Decoder(nn.Module):
                 stride=params['conv2']['stride'],
                 output_padding=params['conv3']['padding']),
             nn.ReLU(True),
+            nn.BatchNorm2d(params['conv2']['filters']),
             # Second transposed convolution
             nn.ConvTranspose2d(
                 in_channels=params['conv2']['filters'],
@@ -100,6 +104,7 @@ class Decoder(nn.Module):
                 padding=params['conv2']['padding'],
                 output_padding=params['conv2']['padding']),
             nn.ReLU(True),
+            nn.BatchNorm2d(params['conv1']['filters']),
             # Third transposed convolution
             nn.ConvTranspose2d(
                 in_channels=params['conv1']['filters'],
@@ -324,8 +329,12 @@ def train_AE(autoencoder, num_epochs, train_dataloader, loss_fn, optim, device,
             print(f'Best loss = {best_loss_train:.4f} in epoch {best_epoch}')
     
     if test_dataloader != None:
+        print(f'Setting model state to best epoch: {best_epoch}')
+        autoencoder.load_state_dict(torch.load(f'{save_dir}/params/t{best_epoch + 1}.pth'))
         return best_loss_val, best_epoch
     else:
+        print(f'Setting model state to best epoch: {best_epoch}')
+        autoencoder.load_state_dict(torch.load(f'{save_dir}/params/t{best_epoch + 1}.pth'))
         return best_loss_train, best_epoch
 
 def CV_AE(k, autoencoder, num_epochs, train_loader, loss_fn, optim, device,

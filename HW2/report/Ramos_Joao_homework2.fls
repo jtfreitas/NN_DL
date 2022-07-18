@@ -647,8 +647,6 @@ INPUT /home/jtfreitas/.miktex/texmfs/install/fonts/tfm/public/cm/cmbx12.tfm
 INPUT /home/jtfreitas/.miktex/texmfs/install/fonts/tfm/public/cm/cmssbx10.tfm
 INPUT /home/jtfreitas/.miktex/texmfs/install/fonts/tfm/public/cm/cmss12.tfm
 INPUT /home/jtfreitas/.miktex/texmfs/install/fonts/tfm/public/cm/cmbx10.tfm
-OUTPUT Ramos_Joao_homework2.pdf
-INPUT /home/jtfreitas/.miktex/texmfs/data/fonts/map/pdftex/pdftex.map
 INPUT /home/jtfreitas/.miktex/texmfs/install/fonts/tfm/public/cm/cmmi10.tfm
 INPUT /home/jtfreitas/.miktex/texmfs/install/fonts/tfm/public/cm/cmsy10.tfm
 INPUT /home/jtfreitas/.miktex/texmfs/install/fonts/tfm/public/cm/cmex10.tfm
@@ -656,6 +654,8 @@ INPUT /home/jtfreitas/.miktex/texmfs/install/fonts/tfm/public/amsfonts/symbols/m
 INPUT /home/jtfreitas/.miktex/texmfs/install/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
 INPUT /home/jtfreitas/.miktex/texmfs/install/fonts/tfm/public/cm/cmbx8.tfm
 INPUT /home/jtfreitas/.miktex/texmfs/install/fonts/tfm/public/cm/cmbx6.tfm
+OUTPUT Ramos_Joao_homework2.pdf
+INPUT /home/jtfreitas/.miktex/texmfs/data/fonts/map/pdftex/pdftex.map
 INPUT /home/jtfreitas/.miktex/texmfs/install/fonts/tfm/public/cm/cmr9.tfm
 INPUT /home/jtfreitas/.miktex/texmfs/install/fonts/tfm/public/cm/cmmi9.tfm
 INPUT /home/jtfreitas/.miktex/texmfs/install/fonts/tfm/public/cm/cmsy9.tfm
