@@ -130,22 +130,30 @@ The autoencoder architecture consists of three convolutional layers, followed by
 
 \section*{Results}
 
-\noindent The best architecture found for the autoencoder is described in Table 1. The K-fold results (Figure 1) show little variability in the learning curves, which is expected by the fairly regular nature and even distribution of class labels in the dataset. While the training loss experiences larger variance, the trend is similar for training and validation across all folds. The convergence of training and validation loss close to 20 training epochs indicates the model is well-regularized and not overfitting.
 
-\noindent The denoising capabilities of the autoencoder were tested by inputting an image with different levels of noise. The results (Figure 2) show that the model is capable of reconstructing images rather well.
 
-\begin{wrapfigure}{r}{4cm}
+\noindent The best architecture found for the autoencoder is described in Table \ref{tab:AE_params}. The K-fold results (Figure \ref{fig:kfold}) show little variability in the learning curves, which is expected by the fairly regular nature and even distribution of class labels in the dataset. 
+
+\begin{wrapfigure}{r}{7cm}
     \centering
-    \includegraphics[height=0.5\textwidth]{res/Reconstruction.pdf}
-    \caption{Noisy sample reconstruction}
-    \end{wrapfigure}
-
-\begin{wrapfigure}{r}{11cm}
-    \centering
-    \includegraphics[width=0.7\textwidth]{res/learning_curve_KFCV.pdf}
-    \caption{Autoencoder K-fold cross-validation learning curves}
-    \label{fig:autoencoder_results}
+    \includegraphics[width=0.52\textwidth]{res/learning_curve_KFCV.pdf}
+    \caption{K-fold learning curves.}
+    \label{fig:kfold}
 \end{wrapfigure}
+
+While the training loss experiences larger variance, the trend is similar for training and validation across all folds. The convergence of training and validation loss close to 20 training epochs indicates the model is well-regularized and not overfitting.
+
+\begin{figure}[b]
+    \centering
+    \includegraphics[width=\textwidth]{res/Reconstruction.pdf}
+    \caption{Denoising samples}
+    \label{fig:recon}
+\end{figure}
+
+
+\noindent The denoising capabilities of the autoencoder were tested by inputting an image with different levels of noise. One sample image is reconstructed (Figure \ref{fig:recon}), and the loss was shown to improve in all extents of noise tested. However, this is not always the case, and generally depends on the sample used. Samples with a larger number of blackened pixels on their own are less likely to see an improvement. This is because the choice of blackened pixels is uniformly random, so the noisy sample might have stayed very similar to the original. The model struggled more to reconstruct samples when Gaussian noise was added. This could be attributed to the lack of noisy samples in the training process, and was left out of the analysis.
+
+\pagebreak
 
 \begin{wraptable}{r}{11cm}
 \centering
@@ -165,5 +173,6 @@ The autoencoder architecture consists of three convolutional layers, followed by
         \textsc{deconv3} & 7 & (3, 2, 1) & ReLU & Yes\\
     \end{tabular}
     \caption{Autoencoder architecture. The no. of channels in \textsc{conv[i]} corresponds to output channels, while it corresponds to input channels in \textsc{Deconv[i]}.}
+    \label{tab:AE_params}
 \end{wraptable}
 \end{document}

@@ -1,5 +1,5 @@
 # Fdb version 3
-["pdflatex"] 1658234856 "/home/jtfreitas/courses/NN_DL/HW2/report/Ramos_Joao_homework2.tex" "Ramos_Joao_homework2.pdf" "Ramos_Joao_homework2" 1658234857
+["pdflatex"] 1658321419 "/home/jtfreitas/courses/NN_DL/HW2/report/Ramos_Joao_homework2.tex" "Ramos_Joao_homework2.pdf" "Ramos_Joao_homework2" 1658321420
   "/home/jtfreitas/.miktex/texmfs/data/fonts/map/pdftex/pdftex.map" 1658166694 80909 eab91d9745dd2edfd62a31d53cd5fe15 ""
   "/home/jtfreitas/.miktex/texmfs/data/miktex/data/le/pdftex/pdflatex.fmt" 1658052773 7113028 cc103b23bdd28eccc790a4713daf7526 ""
   "/home/jtfreitas/.miktex/texmfs/install/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1658052440 1004 54797486969f23fa377b128694d548df ""
@@ -116,10 +116,10 @@
   "/home/jtfreitas/.miktex/texmfs/install/tex/latex/wrapfig/wrapfig.sty" 1658052797 26220 3701aebf80ccdef248c0c20dd062fea9 ""
   "/home/jtfreitas/.miktex/texmfs/install/tex/latex/zref/zref-abspage.sty" 1658053673 2245 c8a4088d07cffc2e5207730c738edd76 ""
   "/home/jtfreitas/.miktex/texmfs/install/tex/latex/zref/zref-base.sty" 1658053673 20785 71a3d72ab517959a6979c27e6176bec1 ""
-  "/home/jtfreitas/courses/NN_DL/HW2/report/Ramos_Joao_homework2.tex" 1658234856 13080 093de9ebf1ce7bcb3a528bb079949813 ""
-  "Ramos_Joao_homework2.aux" 1658234857 744 fc8c957454aa85a9b4031e21b0fd57dd "pdflatex"
-  "Ramos_Joao_homework2.tex" 1658234856 13080 093de9ebf1ce7bcb3a528bb079949813 ""
-  "res/Reconstruction.pdf" 1658229914 32598 cbcbe9412f2ec5f6f52647829e368ad6 ""
+  "/home/jtfreitas/courses/NN_DL/HW2/report/Ramos_Joao_homework2.tex" 1658321419 13647 589f80553979dc2087430eeffa2e4a15 ""
+  "Ramos_Joao_homework2.aux" 1658321419 754 214c7d8635672ca832c9bf7486e9f588 "pdflatex"
+  "Ramos_Joao_homework2.tex" 1658321419 13647 589f80553979dc2087430eeffa2e4a15 ""
+  "res/Reconstruction.pdf" 1658320058 48507 1524f82819d9715927da0c2c49a4ff99 ""
   "res/learning_curve_KFCV.pdf" 1658171895 17344 e329b12ae77e9502a608155817d80e7f ""
   (generated)
   "Ramos_Joao_homework2.aux"

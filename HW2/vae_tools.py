@@ -681,16 +681,16 @@ class Classifier(nn.Module):
 
 
 def train_model(model, train_loader, val_loader, num_epochs, loss_fn, optimizer,
-                AE = None, verbose=True):
+                encoded = False, verbose=True):
                 
     model.create_history(num_epochs)
     train_loss_log = np.zeros(num_epochs)
     val_loss_log = np.zeros(num_epochs)
     for epoch_num in range(num_epochs):
-        train_loss = train_step(model, train_loader, loss_fn, optimizer, AE)
+        train_loss = train_step(model, train_loader, loss_fn, optimizer, encoded=encoded)
         train_loss_log[epoch_num] = train_loss
         
-        val_loss = evaluate(model, val_loader, loss_fn, AE, verbose=verbose)
+        val_loss = evaluate(model, val_loader, loss_fn, encoded=encoded, verbose=verbose)
         if verbose:
             print(
                 f"Epoch: {epoch_num+1} >>> Training loss: {train_loss:.5f} | Validation loss: {val_loss:.5f}", end='\r')
@@ -701,7 +701,7 @@ def train_model(model, train_loader, val_loader, num_epochs, loss_fn, optimizer,
     
     return val_loss_log[-1]
 
-def train_step(model, dataloader, loss_fn, optimizer, AE):
+def train_step(model, dataloader, loss_fn, optimizer, encoded=False):
     train_loss = []
     model.train()  # Training mode (e.g. enable dropout, batchnorm updates,...)
     for sample_batched in dataloader:
@@ -710,9 +710,8 @@ def train_step(model, dataloader, loss_fn, optimizer, AE):
         label_batch = sample_batched[1].to(model.device)
 
         # Forward pass
-        if AE != None:
-            x_latent = AE.encoder(x_batch)
-            out = model(x_latent)
+        if encoded == True:
+            out = model(x_batch)
         else:
             x_batch= x_batch.flatten(start_dim=1)
             out = model(x_batch)
@@ -734,16 +733,15 @@ def train_step(model, dataloader, loss_fn, optimizer, AE):
     train_loss = np.mean(train_loss)
     return train_loss
 
-def evaluate(model, dataloader, loss_fn, AE, verbose=True):
+def evaluate(model, dataloader, loss_fn, encoded=False, verbose=True):
     model.eval()
     data_loss = []
     with torch.no_grad():
         for sample_batched in dataloader:
             x_batch = sample_batched[0].to(model.device)
             label_batch = sample_batched[1].to(model.device)
-            if AE != None:
-                x_latent = AE.encoder(x_batch)
-                out = model(x_latent)
+            if encoded == True:
+                out = model(x_batch)
             else:
                 x_batch = x_batch.flatten(start_dim=1)
                 out = model(x_batch)
