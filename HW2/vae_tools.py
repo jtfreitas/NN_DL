@@ -302,10 +302,13 @@ def train_AE(autoencoder, num_epochs, train_dataloader, loss_fn, optim, device,
                 best_epoch = epoch
                 best_loss_val = val_loss
                 best_loss_train = train_loss
+                best_state = autoencoder.state_dict()
         else:
             if train_loss.item() < best_loss_train:
                 best_epoch = epoch
                 best_loss_train = train_loss
+                best_state = autoencoder.state_dict()
+                
         if save_dir != None:
             # Plot progress
             # Get the output of a specific image (the test image at index 0 in this case)
@@ -325,16 +328,16 @@ def train_AE(autoencoder, num_epochs, train_dataloader, loss_fn, optim, device,
     if verbose:
         if test_dataloader != None:        
             print(f'Best loss = {best_loss_val:.4f} in epoch {best_epoch}')
+            print(f'Setting model state to best epoch: {best_epoch}')
         else:
             print(f'Best loss = {best_loss_train:.4f} in epoch {best_epoch}')
+            print(f'Setting model state to best epoch: {best_epoch}')
     
     if test_dataloader != None:
-        print(f'Setting model state to best epoch: {best_epoch}')
-        autoencoder.load_state_dict(torch.load(f'{save_dir}/params/t{best_epoch + 1}.pth'))
+        autoencoder.load_state_dict(best_state)
         return best_loss_val, best_epoch
     else:
-        print(f'Setting model state to best epoch: {best_epoch}')
-        autoencoder.load_state_dict(torch.load(f'{save_dir}/params/t{best_epoch + 1}.pth'))
+        autoencoder.load_state_dict(best_state)
         return best_loss_train, best_epoch
 
 def CV_AE(k, autoencoder, num_epochs, train_loader, loss_fn, optim, device,

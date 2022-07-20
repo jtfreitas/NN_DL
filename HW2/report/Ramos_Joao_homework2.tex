@@ -29,6 +29,7 @@
 \usepackage{multicol,caption}
 \usepackage{wrapfig}
 \usepackage{parskip}
+\usepackage{arydshln}
 \usepackage{amsfonts}
 \usepackage{amsmath}
 % These packages are all incorporated in the memoir class to one degree or another...
@@ -129,12 +130,40 @@ The autoencoder architecture consists of three convolutional layers, followed by
 
 \section*{Results}
 
-\noindent The best architecture found for the autoencoder is described in Table 1.
+\noindent The best architecture found for the autoencoder is described in Table 1. The K-fold results (Figure 1) show little variability in the learning curves, which is expected by the fairly regular nature and even distribution of class labels in the dataset. While the training loss experiences larger variance, the trend is similar for training and validation across all folds. The convergence of training and validation loss close to 20 training epochs indicates the model is well-regularized and not overfitting.
 
-\begin{table}[b]
+\noindent The denoising capabilities of the autoencoder were tested by inputting an image with different levels of noise. The results (Figure 2) show that the model is capable of reconstructing images rather well.
 
+\begin{wrapfigure}{r}{4cm}
+    \centering
+    \includegraphics[height=0.5\textwidth]{res/Reconstruction.pdf}
+    \caption{Noisy sample reconstruction}
+    \end{wrapfigure}
+
+\begin{wrapfigure}{r}{11cm}
+    \centering
+    \includegraphics[width=0.7\textwidth]{res/learning_curve_KFCV.pdf}
+    \caption{Autoencoder K-fold cross-validation learning curves}
+    \label{fig:autoencoder_results}
+\end{wrapfigure}
+
+\begin{wraptable}{r}{11cm}
+\centering
     \begin{tabular}{ccccccc}
-        Layer & \thead{No. channels \\ Neurons} & \thead{(Kernel,\\ Strides,\\ Padding)} & Activation & \thead{Batch \\ Normalization}\
+        Layer & \thead{No. channels \\ Neurons} & \thead{(Kernel,\\ Strides,\\ Padding)} & Activation & \thead{Batch \\ Normalization}\\
+        \hline
+        \textsc{conv1} & 7 & (3, 2, 1) & ReLU & Yes\\
+        \textsc{conv2} & 10 & (3, 2, 1) & ReLU & Yes\\
+        \textsc{conv3} & 16 & (3, 2, 0) & ReLU & Yes\\
+        \textsc{Lin1} & 32 & N/A & ReLU & N/A \\
+        \hdashline
+        \textsc{Latent} & 3 & N/A & N/A & N/A \\
+        \hdashline
+        \textsc{Lin1} & 32 & N/A & ReLU & N/A \\
+        \textsc{deconv1} & 16 & (3, 2, 0) & ReLU & Yes\\
+        \textsc{deconv2} & 10 & (3, 2, 1) & ReLU & Yes\\
+        \textsc{deconv3} & 7 & (3, 2, 1) & ReLU & Yes\\
     \end{tabular}
-\end{table}
+    \caption{Autoencoder architecture. The no. of channels in \textsc{conv[i]} corresponds to output channels, while it corresponds to input channels in \textsc{Deconv[i]}.}
+\end{wraptable}
 \end{document}
