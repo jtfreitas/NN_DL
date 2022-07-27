@@ -1,26 +1,26 @@
 import os
+from copy import deepcopy
+import random
+
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, ConcatDataset, Subset
 from torchvision import utils as vutils
-from copy import deepcopy
-import tqdm
-import random
+
 import numpy as np
 import matplotlib.pyplot as plt
-from faulthandler import disable
-
-# Training function
 
 
 class Encoder(nn.Module):
-
+    """
+    Encoder for the AE.
+    """
     def __init__(self, conv_out, params, init_weight=None):
         super().__init__()
         self.init_weight = init_weight
         self.encoder_cnn = nn.Sequential(
             nn.Conv2d(
-                in_channels=1, 
+                in_channels=1,
                 out_channels=params['conv1']['filters'],
                 kernel_size=params['conv1']['kernel'],
                 stride=params['conv1']['stride'],
@@ -58,27 +58,34 @@ class Encoder(nn.Module):
         )
 
     def forward(self, x):
+        """
+        Forward pass of the encoder.
+        """
         x = self.encoder_cnn(x)
         x = self.flatten(x)
         x = self.encoder_lin(x)
         return x
 
 class Decoder(nn.Module):
-
+    """
+    Decoder for the AE.
+    """
     def __init__(self, conv_in, params, init_weight=None):
 
-        super().__init__()  # conv1, conv2, conv3, lin1, n_side, encoded_space_dim
+        super().__init__()
 
         # Linear section
         self.init_weight = init_weight
         self.decoder_lin = nn.Sequential(
             # First linear layer
-            nn.Linear(in_features=params['latent_space'],
-                      out_features=params['lin1']),
+            nn.Linear(
+                in_features=params['latent_space'],
+                out_features=params['lin1']),
             nn.ReLU(inplace=True),
             #Second linear layer
-            nn.Linear(in_features=params['lin1'],
-                      out_features=np.prod(conv_in)),
+            nn.Linear(
+                in_features=params['lin1'],
+                out_features=np.prod(conv_in)),
             nn.ReLU(inplace=True)
         )
         # Unflatten
@@ -86,7 +93,7 @@ class Decoder(nn.Module):
         # Convolutional section
         self.decoder_conv = nn.Sequential(
             # First transposed convolution
-        nn.BatchNorm2d(params['conv3']['filters']),
+            nn.BatchNorm2d(params['conv3']['filters']),
             nn.ConvTranspose2d(
                 in_channels=params['conv3']['filters'],
                 out_channels=params['conv2']['filters'],
@@ -116,23 +123,23 @@ class Decoder(nn.Module):
         )
 
     def forward(self, x):
-        # Apply linear layers
+        """
+        Forward pass of the decoder.
+        """
         x = self.decoder_lin(x)
-        # Unflatten
         x = self.unflatten(x)
-        # Apply transposed convolutions
         x = self.decoder_conv(x)
-        # Apply a sigmoid to force the output to be between 0 and 1 (valid pixel values)
         x = torch.sigmoid(x)
         return x
 
 class Autoencoder(nn.Module):
-
+    """
+    Autoencoder main class.
+    """
     def __init__(self, in_side, params, device, init_weight='normal'):
         super().__init__()
-        self.init_weight=init_weight
+        self.init_weight = init_weight
         self.params = params
-        self.in_side = in_side
         self.conv_out = (
             self.params['conv3']['filters'],
             self.no_features(params, in_side),
@@ -142,16 +149,24 @@ class Autoencoder(nn.Module):
         self.decoder = Decoder(self.conv_out, self.params)
         self.encoder = Encoder(self.conv_out, self.params)
         self.device = device
+        self.history = None
+
         self.encoder.to(self.device)
         self.decoder.to(self.device)
 
     def no_features(self, params, n):
+        """
+        Calculate the number of features in the convolutional layers.
+        """
         for i in params.items():
             if 'conv' in i[0]:
                 n = (n - i[1]['kernel'] + 2 * i[1]['padding'])//i[1]['stride'] + 1
         return n
 
     def forward(self, x):
+        """
+        Forward pass of the autoencoder.
+        """
         latent_space = self.encoder(x)
         x = self.decoder(latent_space)
         return x
@@ -185,7 +200,7 @@ class Autoencoder(nn.Module):
             elif isinstance(m, nn.Linear):
                 torch.nn.init.kaiming_uniform_(m.weight)
                 m.bias.data.fill_(0.01)
-            
+
     def reset_weights(self):
         """
         Applies weight initialization on encoder and decoder
@@ -195,6 +210,9 @@ class Autoencoder(nn.Module):
 
 
 def train_epoch(autoencoder, device, dataloader, loss_fn, optimizer, verbose):
+    """
+    Performs one epoch of training.
+    """
     # Set train mode for both the encoder and the decoder
     loss_fn.to(device)
     autoencoder.encoder.train()
@@ -219,6 +237,9 @@ def train_epoch(autoencoder, device, dataloader, loss_fn, optimizer, verbose):
 
 
 def test_epoch(autoencoder, device, dataloader, loss_fn):
+    """
+    Performs one epoch of testing.
+    """
     # Set evaluation mode for encoder and decoder
     autoencoder.to(device)
     loss_fn.to(device)
@@ -249,18 +270,18 @@ def test_epoch(autoencoder, device, dataloader, loss_fn):
 def train_AE(autoencoder, num_epochs, train_dataloader, loss_fn, optim, device,
          test_dataloader=None, save_dir=None, verbose=True):
     """
-    Trains autoencoder model. 
+    Trains autoencoder model.
     """
     autoencoder.create_history(num_epochs)
-            
+
     # Initialize fake loss values for comparison
     best_loss_train = 9999999.0
-    if test_dataloader != None:
+    if test_dataloader is not None:
         best_loss_val = 9999999.0
     best_epoch = 0
     # This helps avoid storing nans in the training timeline
 
-    if save_dir != None:
+    if save_dir is not None:
         params_path = f'{save_dir}/params'
         os.makedirs(params_path, exist_ok=True)
 
@@ -281,7 +302,7 @@ def train_AE(autoencoder, num_epochs, train_dataloader, loss_fn, optim, device,
             verbose=verbose)
 
         # Validation (use the testing function)
-        if test_dataloader != None:
+        if test_dataloader is not None:
             val_loss = test_epoch(
                 autoencoder,
                 device=device,
@@ -294,10 +315,10 @@ def train_AE(autoencoder, num_epochs, train_dataloader, loss_fn, optim, device,
 
         # Store losses in dict
         autoencoder.history['train'][epoch] = train_loss.item()
-        if test_dataloader != None:
+        if test_dataloader is not None:
             autoencoder.history['valid'][epoch] = val_loss.item()
 
-        if test_dataloader != None:
+        if test_dataloader is not None:
             if val_loss.item() < best_loss_val:
                 best_epoch = epoch
                 best_loss_val = val_loss
@@ -308,40 +329,34 @@ def train_AE(autoencoder, num_epochs, train_dataloader, loss_fn, optim, device,
                 best_epoch = epoch
                 best_loss_train = train_loss
                 best_state = autoencoder.state_dict()
-                
-        if save_dir != None:
-            # Plot progress
-            # Get the output of a specific image (the test image at index 0 in this case)
-            img = train_dataloader.dataset[0][0].unsqueeze(0).to(device)
-                
-            autoencoder.eval()
-            #Update validation loss only if test_dataloader is provided
 
-            #Save parameters for all epochs        
+        if save_dir is not None:
+            autoencoder.eval()
+            #Save parameters for all epochs
             torch.save(autoencoder.state_dict(),
                        f'{save_dir}/params/t{epoch + 1}.pth')
-            
+
+            # Plot progress
             plt.ioff()
-            fig, axs = plot_inout(autoencoder, train_dataloader.dataset, device, idx = 39)
+            fig, _ = plot_inout(autoencoder, train_dataloader.dataset, device, idx = 39)
             fig.savefig(f'{plots_path}/t={epoch}.jpg')
             plt.close()
     if verbose:
-        if test_dataloader != None:        
+        if test_dataloader is not None:
             print(f'Best loss = {best_loss_val:.4f} in epoch {best_epoch}')
             print(f'Setting model state to best epoch: {best_epoch}')
         else:
             print(f'Best loss = {best_loss_train:.4f} in epoch {best_epoch}')
             print(f'Setting model state to best epoch: {best_epoch}')
-    
-    if test_dataloader != None:
+
+    if test_dataloader is not None:
         autoencoder.load_state_dict(best_state)
         return best_loss_val, best_epoch
     else:
         autoencoder.load_state_dict(best_state)
         return best_loss_train, best_epoch
 
-def CV_AE(k, autoencoder, num_epochs, train_loader, loss_fn, optim, device,
-         test_loader=None, verbose=True):
+def CV_AE(k, autoencoder, num_epochs, train_loader, loss_fn, optim, verbose=True):
     """
     Validate the model using k-fold.
     This is only used to attest for low variance of the model
@@ -349,7 +364,7 @@ def CV_AE(k, autoencoder, num_epochs, train_loader, loss_fn, optim, device,
     """
 
     # Split the dataset in k folds
-    samples_per_fold = train_loader.dataset.__len__() // k
+    samples_per_fold = len(train_loader.dataset) // k
     subset_idxs = np.array([range(samples_per_fold*i, samples_per_fold*(i+1))
         for i in range(k)])
     fold_losses = np.zeros((2, k, num_epochs))
@@ -364,7 +379,8 @@ def CV_AE(k, autoencoder, num_epochs, train_loader, loss_fn, optim, device,
         model_fold.parameters(), lr=optim.param_groups[0]['lr'])
 
     for fold in range(k):
-        print(f"Fold {fold+1}/{k}...", end='\t')
+        if verbose:
+            print(f"Fold {fold+1}/{k}...", end='\t')
         # Re-initialize the weights of the model
         model_fold.reset_weights()
         # Create a deepcopy of the folds to avoid modifying the original list
@@ -385,21 +401,20 @@ def CV_AE(k, autoencoder, num_epochs, train_loader, loss_fn, optim, device,
 
         fold_losses[0,fold] = model_fold.history['train']
         fold_losses[1,fold] = model_fold.history['valid']
-        print("Done.")
+        if verbose:
+            print("Done.")
 
     return fold_losses
-            
 
 def plot_inout(autoencoder, dataset, device, idx = None):
     """
     Plot the input and output of the model.
     """
-    if idx == None:
+    if idx is None:
         img, _ = dataset[random.randint(0, len(dataset))]
     else:
         img, _ = dataset[idx]
     img = img.unsqueeze(0) # Add the batch dimension in the first axis
-    # Encode the image
 
     fig, axs = plt.subplots(1,2, figsize=(14, 8), tight_layout='pad')
 
@@ -416,88 +431,110 @@ def plot_inout(autoencoder, dataset, device, idx = None):
     return fig, axs
 
 class Generator(nn.Module):
+    """
+    Generator component of the GAN
+    """
     def __init__(self, params):
-        super(Generator, self).__init__()
+        """
+        Initialize the generator.
+        N.B: Output is square, so padding, stride and kernel
+             are square too.
+        """
+        super().__init__()
         self.main = nn.Sequential(
-            # input is Z, going into a convolution
             nn.ConvTranspose2d(
-                params['latent_space'], params['G_filters'] * 4, 3, 2, 0, bias=False),
+                params['latent_space'],
+                params['G_filters'] * 4,
+                3, 2, 0),
             nn.BatchNorm2d(params['G_filters'] * 4),
-            nn.ReLU(True),
-            # state size. (G_filters*8, 4, 4)
+            nn.ReLU(True), # shape (G_filters*4, 3, 3)
             nn.ConvTranspose2d(
-                params['G_filters'] * 4, params['G_filters'] * 2, 3, 2, 0, bias=False),
+                params['G_filters'] * 4,
+                params['G_filters'] * 2,
+                3, 2, 0),
             nn.BatchNorm2d(params['G_filters'] * 2),
-            nn.ReLU(True),
-            # state size. (G_filters*4, 8, 8)
-            nn.ConvTranspose2d(params['G_filters'] * 2,
-                               params['G_filters'], 3, 2, 0, bias=False),
-            nn.BatchNorm2d(params['G_filters']),
-            nn.ReLU(True),
-            # state size. (G_filters*2, 16, 16)
+            nn.ReLU(True), # shape (G_filters*2, 7, 7)
             nn.ConvTranspose2d(
-                params['G_filters'], params['n_channels'], 3, 2, 2, 1, bias=False),
-            nn.Tanh()
-            # state size. (n_channels, 64, 64)
+                params['G_filters'] * 2,
+                params['G_filters'],
+                3, 2, 0),
+            nn.BatchNorm2d(params['G_filters']),
+            nn.ReLU(True), # shape (G_filters, 15, 15)
+            nn.ConvTranspose2d(
+                params['G_filters'],
+                params['n_channels'],
+                3, 2, 2, 1, bias=False),
+            nn.Tanh()      # shape (n_channels, 28, 28)
         )
 
-    def forward(self, input):
-        return self.main(input)
+    def forward(self, x):
+        """
+        Forward pass of the generator.
+        """
+        return self.main(x)
 
 
 class Discriminator(nn.Module):
+    """
+    Discriminator component of the GAN
+    """
     def __init__(self, params, conditional=False):
-        super(Discriminator, self).__init__()
+        super().__init__()
         self.conditional = conditional
-        self.main = nn.Sequential(   # input is (1,28,28)
-                        nn.Conv2d(
-                            in_channels=params['n_channels'],
-                            out_channels=params['D_filters'],
-                            kernel_size=4, stride=2, padding=1),
-                        nn.LeakyReLU(0.2, inplace=True),
-                        # state size (D_filters, 14, 14)
-                        nn.Conv2d(
-                            in_channels=params['D_filters'],
-                            out_channels=params['D_filters'] * 2,
-                            kernel_size=4, stride=2, padding=1),
-                        nn.BatchNorm2d(params['D_filters'] * 2),
-                        nn.LeakyReLU(0.2, inplace=True),
-                        # state size (D_filters*2, 7, 7)
-                        nn.Conv2d(
-                            in_channels=params['D_filters'] * 2,
-                            out_channels=params['D_filters'] * 4,
-                            kernel_size=4, stride=2, padding=1),
-                        nn.BatchNorm2d(params['D_filters'] * 4),
-                        nn.LeakyReLU(0.2, inplace=True),
-                        # state size (D_filters*4, 3, 3)
-                        nn.Conv2d(
-                            in_channels=params['D_filters'] * 4,
-                            out_channels=1,
-                            kernel_size=4, stride=2, padding=1)
-                        # scalar output (1, 1, 1)
-                        )
-    def forward(self, input):
-        return self.main(input)
+        self.main = nn.Sequential(   # input (1,28,28)
+            nn.Conv2d(
+                in_channels=params['n_channels'],
+                out_channels=params['D_filters'],
+                kernel_size=4, stride=2, padding=1),
+            nn.LeakyReLU(0.2, inplace=True),
+            # shape (D_filters, 14, 14)
+            nn.Conv2d(
+                in_channels=params['D_filters'],
+                out_channels=params['D_filters'] * 2,
+                kernel_size=4, stride=2, padding=1),
+            nn.BatchNorm2d(params['D_filters'] * 2),
+            nn.LeakyReLU(0.2, inplace=True),
+            # shape (D_filters*2, 7, 7)
+            nn.Conv2d(
+                in_channels=params['D_filters'] * 2,
+                out_channels=params['D_filters'] * 4,
+                kernel_size=4, stride=2, padding=1),
+            nn.BatchNorm2d(params['D_filters'] * 4),
+            nn.LeakyReLU(0.2, inplace=True),
+            # shape (D_filters*4, 3, 3)
+            nn.Conv2d(
+                in_channels=params['D_filters'] * 4,
+                out_channels=1,
+                kernel_size=4, stride=2, padding=1)
+            # scalar output (1, 1, 1)
+            )
+    def forward(self, x):
+        """
+        Forward pass of the discriminator.
+        """
+        return self.main(x)
 
-class GAN(nn.Module):
+class GAN:
     """
     GAN model
+    NB: As opposed to the autoencoder, the GAN does not
+        inherit from nn.Module, since there is no need to
+        define a forward pass.
     """
     def __init__(self, params, device, conditional=False):
         """
         Initialize the model.
         params: dictionary of parameters
         device: torch.device
-        
         """
-        super(GAN, self).__init__()
+        super().__init__()
         self.conditional = conditional
         self.latent_space = params['latent_space']
         self.netG = Generator(params)
         self.netD = Discriminator(params, conditional = self.conditional)
         self.epochs_trained = 0
         self.device = device
-        
+
         self.optimizerD = getattr(torch.optim, params['opt'])(
             [{'params': self.netD.parameters()},], lr=params['lr'])
         self.optimizerG = getattr(torch.optim, params['opt'])(
@@ -512,6 +549,9 @@ class GAN(nn.Module):
         self.netG.apply(self.weights_init)
 
     def weights_init(self, m):
+        """
+        Initialize the weights of the networks.
+        """
         classname = m.__class__.__name__
         if classname.find('Conv') != -1:
             nn.init.normal_(m.weight.data, 0.0, 0.02)
@@ -531,7 +571,7 @@ def update_D(gan, data, criterion, device):
     b_size = real_cpu.size(0)
     label = torch.full((b_size,), real_label,
                     dtype=torch.float, device=device)
-    
+
     # Forward pass real batch through D
     output = gan.netD(real_cpu).view(-1)
 
@@ -544,12 +584,12 @@ def update_D(gan, data, criterion, device):
 
     # Train with batch of latent vectors to generate fakes
     noise = torch.randn(b_size, gan.latent_space, 1, 1, device=device)
-    fake = gan.netG(noise)    
+    fake = gan.netG(noise)
     label.fill_(fake_label)
-    
+
     # Discriminate through fake images
     output = gan.netD(fake.detach()).view(-1)
-    
+
     #Compute loss on fake batch, propagate loss
     errD_fake = criterion(output, label)
     errD_fake.backward()
@@ -565,9 +605,7 @@ def update_G(gan, output, label, fake, criterion, saturating=False):
 
     """
     Maximize log(D(G(z)))
-    
     saturating: Whether to minmax log(1 - D(G(z)))) or maximize -log(D(G(z)))
-
     """
     real_label, fake_label = 1., 0.
 
@@ -586,18 +624,28 @@ def update_G(gan, output, label, fake, criterion, saturating=False):
     errG.backward()
 
     D_G_z2 = output.mean().item()
-    
+
     #Update optimizer
     gan.optimizerG.step()
 
-    
-    return D_G_z2, errG 
+    return D_G_z2, errG
 
 
 def train_GAN(gan, train_dataloader,num_epochs,
             criterion,
             device, saturating, snapshots = True, save_dir=None, verbose=True):
-    
+    """
+    Train the GAN model.
+        gan: GAN model
+        train_dataloader: torch.utils.data.DataLoader
+        num_epochs: int
+        criterion: loss function
+        device: torch.device
+        saturating: bool (MM or NS loss method)
+        snapshots: bool
+        save_dir: str
+        verbose: bool
+    """
     if snapshots:
         img_list = []
         iters = 0
@@ -607,40 +655,45 @@ def train_GAN(gan, train_dataloader,num_epochs,
     fixed_noise = torch.randn(64, gan.latent_space, 1, 1, device=device)
     for epoch in range(gan.epochs_trained, gan.epochs_trained + num_epochs):
     # For each batch in the dataloader
-        for i, data in enumerate(train_dataloader):#, desc=f'Training epoch #{epoch + 1}/{gan.epochs_trained + num_epochs}',disable=not(verbose)):
+        for i, data in enumerate(train_dataloader):
 
 
             output, label, fake, D_x, D_G_z1, errD = update_D(gan, data, criterion, device)
 
             D_G_z2, errG = update_G(gan, output, label, fake, criterion, saturating=saturating)
-            
             # Save Losses for plotting later
             G_losses.append(errG.item())
             D_losses.append(errD.item())
 
             # Check how the generator is doing by saving G's output on fixed_noise
             if snapshots:
-                if (iters % 500 == 0) or ((epoch == num_epochs) and (i == len(train_dataloader)-1)):
+                if (iters % 500 == 0) or \
+                    ((epoch == num_epochs) and (i == len(train_dataloader)-1)):
                     with torch.no_grad():
                         fake = gan.netG(fixed_noise).detach().cpu()
                     img_list.append(vutils.make_grid(fake, padding=2, normalize=True))
 
                 iters += 1
         if verbose:
-            print(f'[{epoch + 1}/{gan.epochs_trained + num_epochs}]\tLoss_D: {errD.item():.4f}, \tLoss_G: {errG.item():.4f}, \tD(x): {D_x:.4f} \tD(G(z)): {D_G_z1:.4f} / {D_G_z2:.4f}')
-        
+            print(f'[{epoch + 1}/{gan.epochs_trained + num_epochs}]\t'
+            f'Loss_D: {errD.item():.4f}, \tLoss_G: {errG.item():.4f}, \tD(x):'
+            f'{D_x:.4f} \tD(G(z)): {D_G_z1:.4f} / {D_G_z2:.4f}')
+
         loss_history['G_losses'][epoch] = np.mean(G_losses)
         loss_history['D_losses'][epoch] = np.mean(D_losses)
     gan.epochs_trained += num_epochs
     if snapshots:
         return loss_history, img_list
-    else:
-        return loss_history
+
+    return loss_history
 
 
 class Classifier(nn.Module):
+    """
+    Classifier for autoencoder
+    """
     def __init__(self, params, device):
-        super(Classifier, self).__init__()
+        super().__init__()
         self.device = device
         self.net = nn.Sequential(
             nn.Linear(*params['lin1']),
@@ -654,25 +707,42 @@ class Classifier(nn.Module):
             nn.ReLU(inplace=True),
             nn.Linear(*params['lin4'])
         )
+        self.history = None
         self.reset_weights()
 
     def forward(self, x):
+        """
+        Forward pass of the classifier.
+        """
         return self.net(x)
 
     def predict(self, x):
+        """
+        Predict the class of the input.
+        """
         return nn.Softmax(dim=1)(self.forward(x))
 
     def create_history(self, num_epochs):
-       self.history = dict(
-        train=np.zeros(num_epochs),
-        valid=np.zeros(num_epochs),
-        epoch=np.arange(1,num_epochs+1))
+        """
+        Create a history of the loss for each epoch.
+        """
+        self.history = dict(
+            train=np.zeros(num_epochs),
+            valid=np.zeros(num_epochs),
+            epoch=np.arange(1,num_epochs+1)
+            )
 
 
     def reset_weights(self):
+        """
+        Reset weights of the classifier.
+        """
         self.net.apply(self.init_weights)
 
     def init_weights(self, m):
+        """
+        Initialize weights of the classifier with Glorot initialization.
+        """
         if isinstance(m, nn.Linear):
             nn.init.xavier_uniform_(m.weight)
             nn.init.zeros_(m.bias)
@@ -682,35 +752,54 @@ class Classifier(nn.Module):
 
 def train_model(model, train_loader, val_loader, num_epochs, loss_fn, optimizer,
                 encoded = False, verbose=True):
-                
+    """
+    Train the model.
+        model: model to train
+        train_loader: torch.utils.data.DataLoader
+        val_loader: torch.utils.data.DataLoader
+        num_epochs: int
+        loss_fn: loss function
+        optimizer: optimizer
+        encoded: bool (if the data is encoded beforehand)
+        verbose: bool
+    """
     model.create_history(num_epochs)
     train_loss_log = np.zeros(num_epochs)
     val_loss_log = np.zeros(num_epochs)
     for epoch_num in range(num_epochs):
         train_loss = train_step(model, train_loader, loss_fn, optimizer, encoded=encoded)
         train_loss_log[epoch_num] = train_loss
-        
+
         val_loss = evaluate(model, val_loader, loss_fn, encoded=encoded, verbose=verbose)
         if verbose:
             print(
-                f"Epoch: {epoch_num+1} >>> Training loss: {train_loss:.5f} | Validation loss: {val_loss:.5f}", end='\r')
+                f"Epoch: {epoch_num+1} >>> Training loss: {train_loss:.5f}"
+                "| Validation loss: {val_loss:.5f}", end='\r')
         val_loss_log[epoch_num] = val_loss
 
     model.history['train'] = train_loss_log
     model.history['valid'] = val_loss_log
-    
+
     return val_loss_log[-1]
 
 def train_step(model, dataloader, loss_fn, optimizer, encoded=False):
+    """
+    Train a single step of the model.
+        model: model to train
+        dataloader: torch.utils.data.DataLoader
+        loss_fn: loss function
+        optimizer: optimizer
+        encoded: bool (if the data is encoded beforehand)
+    """
     train_loss = []
-    model.train()  # Training mode (e.g. enable dropout, batchnorm updates,...)
+    model.train()  # Training mode
     for sample_batched in dataloader:
         # Move data to device
         x_batch = sample_batched[0].to(model.device)
         label_batch = sample_batched[1].to(model.device)
 
         # Forward pass
-        if encoded == True:
+        if encoded:
             out = model(x_batch)
         else:
             x_batch= x_batch.flatten(start_dim=1)
@@ -734,13 +823,21 @@ def train_step(model, dataloader, loss_fn, optimizer, encoded=False):
     return train_loss
 
 def evaluate(model, dataloader, loss_fn, encoded=False, verbose=True):
+    """
+    Evaluate the model.
+        model: model to evaluate
+        dataloader: torch.utils.data.DataLoader
+        loss_fn: loss function
+        encoded: bool (if the data is encoded beforehand)
+        verbose: bool
+    """
     model.eval()
     data_loss = []
     with torch.no_grad():
         for sample_batched in dataloader:
             x_batch = sample_batched[0].to(model.device)
             label_batch = sample_batched[1].to(model.device)
-            if encoded == True:
+            if encoded:
                 out = model(x_batch)
             else:
                 x_batch = x_batch.flatten(start_dim=1)
@@ -754,5 +851,5 @@ def evaluate(model, dataloader, loss_fn, encoded=False, verbose=True):
             print(f"Loss = {data_loss:.5f}")
         return data_loss
 
-def RAM_used(tensor):
-    return tensor.element_size() * tensor.nelement()
+# def RAM_used(tensor):
+#     return tensor.element_size() * tensor.nelement()

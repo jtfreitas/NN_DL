@@ -153,9 +153,13 @@ While the training loss experiences larger variance, the trend is similar for tr
 
 \noindent The denoising capabilities of the autoencoder were tested by inputting an image with different levels of noise. One sample image is reconstructed (Figure \ref{fig:recon}), and the loss was shown to improve in all extents of noise tested. However, this is not always the case, and generally depends on the sample used. Samples with a larger number of blackened pixels on their own are less likely to see an improvement. This is because the choice of blackened pixels is uniformly random, so the noisy sample might have stayed very similar to the original. The model struggled more to reconstruct samples when Gaussian noise was added. This could be attributed to the lack of noisy samples in the training process, and was left out of the analysis.
 
+Two classifier models were separately trained on the original dataset and on the corresponding latent space version produced by the autoencoder. The learning curves were compared (Figure \ref{fig:classifier}). While the 
+
+
 \pagebreak
 
 \begin{wraptable}{r}{11cm}
+    %%% AE_params table
 \centering
     \begin{tabular}{ccccccc}
         Layer & \thead{No. channels \\ Neurons} & \thead{(Kernel,\\ Strides,\\ Padding)} & Activation & \thead{Batch \\ Normalization}\\
@@ -175,4 +179,6 @@ While the training loss experiences larger variance, the trend is similar for tr
     \caption{Autoencoder architecture. The no. of channels in \textsc{conv[i]} corresponds to output channels, while it corresponds to input channels in \textsc{Deconv[i]}.}
     \label{tab:AE_params}
 \end{wraptable}
+
+
 \end{document}
