@@ -11,6 +11,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+################################################################
+
+# Autoencoder modules
+
 class Encoder(nn.Module):
     """
     Encoder for the AE.
@@ -266,7 +270,6 @@ def test_epoch(autoencoder, device, dataloader, loss_fn):
 
 # Training cycle
 
-
 def train_AE(autoencoder, num_epochs, train_dataloader, loss_fn, optim, device,
          test_dataloader=None, save_dir=None, verbose=True):
     """
@@ -430,264 +433,6 @@ def plot_inout(autoencoder, dataset, device, idx = None):
     axs[1].set_title('Reconstructed', fontsize=24)
     return fig, axs
 
-class Generator(nn.Module):
-    """
-    Generator component of the GAN
-    """
-    def __init__(self, params):
-        """
-        Initialize the generator.
-        N.B: Output is square, so padding, stride and kernel
-             are square too.
-        """
-        super().__init__()
-        self.main = nn.Sequential(
-            nn.ConvTranspose2d(
-                params['latent_space'],
-                params['G_filters'] * 4,
-                3, 2, 0),
-            nn.BatchNorm2d(params['G_filters'] * 4),
-            nn.ReLU(True), # shape (G_filters*4, 3, 3)
-            nn.ConvTranspose2d(
-                params['G_filters'] * 4,
-                params['G_filters'] * 2,
-                3, 2, 0),
-            nn.BatchNorm2d(params['G_filters'] * 2),
-            nn.ReLU(True), # shape (G_filters*2, 7, 7)
-            nn.ConvTranspose2d(
-                params['G_filters'] * 2,
-                params['G_filters'],
-                3, 2, 0),
-            nn.BatchNorm2d(params['G_filters']),
-            nn.ReLU(True), # shape (G_filters, 15, 15)
-            nn.ConvTranspose2d(
-                params['G_filters'],
-                params['n_channels'],
-                3, 2, 2, 1, bias=False),
-            nn.Tanh()      # shape (n_channels, 28, 28)
-        )
-
-    def forward(self, x):
-        """
-        Forward pass of the generator.
-        """
-        return self.main(x)
-
-
-class Discriminator(nn.Module):
-    """
-    Discriminator component of the GAN
-    """
-    def __init__(self, params, conditional=False):
-        super().__init__()
-        self.conditional = conditional
-        self.main = nn.Sequential(   # input (1,28,28)
-            nn.Conv2d(
-                in_channels=params['n_channels'],
-                out_channels=params['D_filters'],
-                kernel_size=4, stride=2, padding=1),
-            nn.LeakyReLU(0.2, inplace=True),
-            # shape (D_filters, 14, 14)
-            nn.Conv2d(
-                in_channels=params['D_filters'],
-                out_channels=params['D_filters'] * 2,
-                kernel_size=4, stride=2, padding=1),
-            nn.BatchNorm2d(params['D_filters'] * 2),
-            nn.LeakyReLU(0.2, inplace=True),
-            # shape (D_filters*2, 7, 7)
-            nn.Conv2d(
-                in_channels=params['D_filters'] * 2,
-                out_channels=params['D_filters'] * 4,
-                kernel_size=4, stride=2, padding=1),
-            nn.BatchNorm2d(params['D_filters'] * 4),
-            nn.LeakyReLU(0.2, inplace=True),
-            # shape (D_filters*4, 3, 3)
-            nn.Conv2d(
-                in_channels=params['D_filters'] * 4,
-                out_channels=1,
-                kernel_size=4, stride=2, padding=1)
-            # scalar output (1, 1, 1)
-            )
-    def forward(self, x):
-        """
-        Forward pass of the discriminator.
-        """
-        return self.main(x)
-
-class GAN:
-    """
-    GAN model
-    NB: As opposed to the autoencoder, the GAN does not
-        inherit from nn.Module, since there is no need to
-        define a forward pass.
-    """
-    def __init__(self, params, device, conditional=False):
-        """
-        Initialize the model.
-        params: dictionary of parameters
-        device: torch.device
-        """
-        super().__init__()
-        self.conditional = conditional
-        self.latent_space = params['latent_space']
-        self.netG = Generator(params)
-        self.netD = Discriminator(params, conditional = self.conditional)
-        self.epochs_trained = 0
-        self.device = device
-
-        self.optimizerD = getattr(torch.optim, params['opt'])(
-            [{'params': self.netD.parameters()},], lr=params['lr'])
-        self.optimizerG = getattr(torch.optim, params['opt'])(
-            [{'params': self.netG.parameters()},], lr=params['lr'])
-        self.reset_weights()
-
-    def reset_weights(self):
-        """
-        Reset the weights of the networks.
-        """
-        self.netD.apply(self.weights_init)
-        self.netG.apply(self.weights_init)
-
-    def weights_init(self, m):
-        """
-        Initialize the weights of the networks.
-        """
-        classname = m.__class__.__name__
-        if classname.find('Conv') != -1:
-            nn.init.normal_(m.weight.data, 0.0, 0.02)
-        elif classname.find('BatchNorm') != -1:
-            nn.init.normal_(m.weight.data, 1.0, 0.02)
-            nn.init.constant_(m.bias.data, 0)
-
-def update_D(gan, data, criterion, device):
-    """
-    Maximize log(D(x)) + log(1 - D(G(z)))
-    """
-    real_label, fake_label = 1., 0.
-    gan.netD.zero_grad()
-
-    # Format batch
-    real_cpu = data[0].to(device)
-    b_size = real_cpu.size(0)
-    label = torch.full((b_size,), real_label,
-                    dtype=torch.float, device=device)
-
-    # Forward pass real batch through D
-    output = gan.netD(real_cpu).view(-1)
-
-    # Compute loss
-    errD_real = criterion(output, label)
-
-    # Propagate loss
-    errD_real.backward()
-    D_x = output.mean().item()
-
-    # Train with batch of latent vectors to generate fakes
-    noise = torch.randn(b_size, gan.latent_space, 1, 1, device=device)
-    fake = gan.netG(noise)
-    label.fill_(fake_label)
-
-    # Discriminate through fake images
-    output = gan.netD(fake.detach()).view(-1)
-
-    #Compute loss on fake batch, propagate loss
-    errD_fake = criterion(output, label)
-    errD_fake.backward()
-    D_G_z1 = output.mean().item()
-
-    #Error is sum of losses on real and fake batches
-    errD = errD_real + errD_fake
-    gan.optimizerD.step()
-
-    return output, label, fake, D_x, D_G_z1, errD
-
-def update_G(gan, output, label, fake, criterion, saturating=False):
-
-    """
-    Maximize log(D(G(z)))
-    saturating: Whether to minmax log(1 - D(G(z)))) or maximize -log(D(G(z)))
-    """
-    real_label, fake_label = 1., 0.
-
-    #set saturating or non-saturating loss
-    label.fill_(fake_label) if saturating else label.fill_(real_label)
-    output = gan.netD(fake).view(-1)
-    errG = -criterion(output, label) if saturating else criterion(output, label)
-
-    gan.netG.zero_grad()
-
-
-    label.fill_(real_label)     # need real labels for G(z)
-    #Compute loss, propagate
-    output = gan.netD(fake).view(-1)
-    errG = criterion(output, label)
-    errG.backward()
-
-    D_G_z2 = output.mean().item()
-
-    #Update optimizer
-    gan.optimizerG.step()
-
-    return D_G_z2, errG
-
-
-def train_GAN(gan, train_dataloader,num_epochs,
-            criterion,
-            device, saturating, snapshots = True, save_dir=None, verbose=True):
-    """
-    Train the GAN model.
-        gan: GAN model
-        train_dataloader: torch.utils.data.DataLoader
-        num_epochs: int
-        criterion: loss function
-        device: torch.device
-        saturating: bool (MM or NS loss method)
-        snapshots: bool
-        save_dir: str
-        verbose: bool
-    """
-    if snapshots:
-        img_list = []
-        iters = 0
-
-    loss_history = {'G_losses' : [0]*num_epochs, 'D_losses' : [0]*num_epochs}
-    G_losses, D_losses = [], []
-    fixed_noise = torch.randn(64, gan.latent_space, 1, 1, device=device)
-    for epoch in range(gan.epochs_trained, gan.epochs_trained + num_epochs):
-    # For each batch in the dataloader
-        for i, data in enumerate(train_dataloader):
-
-
-            output, label, fake, D_x, D_G_z1, errD = update_D(gan, data, criterion, device)
-
-            D_G_z2, errG = update_G(gan, output, label, fake, criterion, saturating=saturating)
-            # Save Losses for plotting later
-            G_losses.append(errG.item())
-            D_losses.append(errD.item())
-
-            # Check how the generator is doing by saving G's output on fixed_noise
-            if snapshots:
-                if (iters % 500 == 0) or \
-                    ((epoch == num_epochs) and (i == len(train_dataloader)-1)):
-                    with torch.no_grad():
-                        fake = gan.netG(fixed_noise).detach().cpu()
-                    img_list.append(vutils.make_grid(fake, padding=2, normalize=True))
-
-                iters += 1
-        if verbose:
-            print(f'[{epoch + 1}/{gan.epochs_trained + num_epochs}]\t'
-            f'Loss_D: {errD.item():.4f}, \tLoss_G: {errG.item():.4f}, \tD(x):'
-            f'{D_x:.4f} \tD(G(z)): {D_G_z1:.4f} / {D_G_z2:.4f}')
-
-        loss_history['G_losses'][epoch] = np.mean(G_losses)
-        loss_history['D_losses'][epoch] = np.mean(D_losses)
-    gan.epochs_trained += num_epochs
-    if snapshots:
-        return loss_history, img_list
-
-    return loss_history
-
-
 class Classifier(nn.Module):
     """
     Classifier for autoencoder
@@ -746,9 +491,6 @@ class Classifier(nn.Module):
         if isinstance(m, nn.Linear):
             nn.init.xavier_uniform_(m.weight)
             nn.init.zeros_(m.bias)
-
-
-
 
 def train_model(model, train_loader, val_loader, num_epochs, loss_fn, optimizer,
                 encoded = False, verbose=True):
@@ -851,5 +593,294 @@ def evaluate(model, dataloader, loss_fn, encoded=False, verbose=True):
             print(f"Loss = {data_loss:.5f}")
         return data_loss
 
-# def RAM_used(tensor):
-#     return tensor.element_size() * tensor.nelement()
+
+#########################################################
+
+# GAN modules
+
+
+class Generator(nn.Module):
+    """
+    Generator component of the GAN
+    """
+    def __init__(self, params):
+        """
+        Initialize the generator.
+        N.B: Output is square, so padding, stride and kernel
+             are square too.
+        """
+        super().__init__()
+        self.main = nn.Sequential(
+            nn.ConvTranspose2d(
+                params['latent_space'],
+                params['G_filters'] * 4,
+                3, 2, 0),
+            nn.BatchNorm2d(params['G_filters'] * 4),
+            nn.ReLU(True), # shape (G_filters*4, 3, 3)
+            nn.ConvTranspose2d(
+                params['G_filters'] * 4,
+                params['G_filters'] * 2,
+                3, 2, 0),
+            nn.BatchNorm2d(params['G_filters'] * 2),
+            nn.ReLU(True), # shape (G_filters*2, 7, 7)
+            nn.ConvTranspose2d(
+                params['G_filters'] * 2,
+                params['G_filters'],
+                3, 2, 0),
+            nn.BatchNorm2d(params['G_filters']),
+            nn.ReLU(True), # shape (G_filters, 15, 15)
+            nn.ConvTranspose2d(
+                params['G_filters'],
+                params['n_channels'],
+                3, 2, 2, 1, bias=False),
+            nn.Tanh()      # shape (n_channels, 28, 28)
+        )
+
+    def forward(self, x):
+        """
+        Forward pass of the generator.
+        """
+        return self.main(x)
+
+
+class Discriminator(nn.Module):
+    """
+    Discriminator component of the GAN
+    """
+    def __init__(self, params):
+        super().__init__()
+        self.main = nn.Sequential(   # input (1,28,28)
+            nn.Conv2d(
+                in_channels=params['n_channels'],
+                out_channels=params['D_filters'],
+                kernel_size=4, stride=2, padding=1),
+            nn.LeakyReLU(0.2, inplace=True),
+            # shape (D_filters, 14, 14)
+            nn.Conv2d(
+                in_channels=params['D_filters'],
+                out_channels=params['D_filters'] * 2,
+                kernel_size=4, stride=2, padding=1),
+            nn.BatchNorm2d(params['D_filters'] * 2),
+            nn.LeakyReLU(0.2, inplace=True),
+            # shape (D_filters*2, 7, 7)
+            nn.Conv2d(
+                in_channels=params['D_filters'] * 2,
+                out_channels=params['D_filters'] * 4,
+                kernel_size=4, stride=2, padding=1),
+            nn.BatchNorm2d(params['D_filters'] * 4),
+            nn.LeakyReLU(0.2, inplace=True),
+            # shape (D_filters*4, 3, 3)
+            nn.Conv2d(
+                in_channels=params['D_filters'] * 4,
+                out_channels=1,
+                kernel_size=4, stride=2, padding=1)
+            # scalar output (1, 1, 1)
+            )
+    def forward(self, x):
+        """
+        Forward pass of the discriminator.
+        """
+        return self.main(x)
+
+class GAN(nn.Module):
+    """
+    GAN model
+    NB: As opposed to the autoencoder, the GAN does not
+        inherit from nn.Module, since there is no need to
+        define a forward pass.
+    """
+    def __init__(self, params, device):
+        """
+        Initialize the model.
+        params: dictionary of parameters
+        device: torch.device
+        """
+        super().__init__()
+        self.latent_space = params['latent_space']
+        self.netG = Generator(params)
+        self.netD = Discriminator(params) 
+        self.epochs_trained = 0
+        self.device = device
+
+        self.optimizerD = getattr(torch.optim, params['opt'])(
+            [{'params': self.netD.parameters()},], lr=params['lr'])
+        self.optimizerG = getattr(torch.optim, params['opt'])(
+            [{'params': self.netG.parameters()},], lr=params['lr'])
+        self.reset_weights()
+        
+
+        self.to(self.device)  #Immediately send the model to the device 
+
+    def reset_weights(self):
+        """
+        Reset the weights of the networks.
+        """
+        self.netD.apply(self.weights_init)
+        self.netG.apply(self.weights_init)
+
+    def weights_init(self, m):
+        """
+        Initialize the weights of the networks.
+        """
+        classname = m.__class__.__name__
+        if classname.find('Conv') != -1:
+            nn.init.normal_(m.weight.data, 0.0, 0.02)
+        elif classname.find('BatchNorm') != -1:
+            nn.init.normal_(m.weight.data, 1.0, 0.02)
+            nn.init.constant_(m.bias.data, 0)
+
+def update_D(gan, data, criterion, device):
+    """
+    Maximize log(D(x)) + log(1 - D(G(z)))
+    """
+    real_label, fake_label = 1., 0.
+    gan.netD.zero_grad()
+
+    # Format batch
+    real_cpu = data[0].to(device)
+    b_size = real_cpu.size(0)
+    label = torch.full((b_size,), real_label,
+                    dtype=torch.float, device=device)
+
+    # Forward pass real batch through D
+    output = gan.netD(real_cpu).view(-1)
+
+    # Compute loss
+    errD_real = criterion(output, label)
+
+    # Propagate loss
+    errD_real.backward()
+    D_x = output.mean().item()
+
+    # Train with batch of latent vectors to generate fakes
+    noise = torch.randn(b_size, gan.latent_space, 1, 1, device=device)
+    fake = gan.netG(noise)
+    label.fill_(fake_label)
+
+    # Discriminate through fake images
+    output = gan.netD(fake.detach()).view(-1)
+
+    #Compute loss on fake batch, propagate loss
+    errD_fake = criterion(output, label)
+    errD_fake.backward()
+    D_G_z1 = output.mean().item()
+
+    #Error is sum of losses on real and fake batches
+    errD = errD_real + errD_fake
+    gan.optimizerD.step()
+
+    return output, label, fake, D_x, D_G_z1, errD
+
+def update_G(gan, output, label, fake, criterion, saturating=False):
+
+    """
+    Maximize log(D(G(z)))
+    saturating: Whether to minmax log(1 - D(G(z)))) or maximize -log(D(G(z)))
+    """
+    real_label, fake_label = 1., 0.
+
+    #set saturating or non-saturating loss
+    label.fill_(fake_label) if saturating else label.fill_(real_label)
+    output = gan.netD(fake).view(-1)
+    errG = -criterion(output, label) if saturating else criterion(output, label)
+
+    gan.netG.zero_grad()
+
+
+    label.fill_(real_label)     # need real labels for G(z)
+    #Compute loss, propagate
+    output = gan.netD(fake).view(-1)
+    errG = criterion(output, label)
+    errG.backward()
+
+    D_G_z2 = output.mean().item()
+
+    #Update optimizer
+    gan.optimizerG.step()
+
+    return D_G_z2, errG
+
+
+def train_GAN(gan, train_dataloader,num_epochs,
+            criterion,
+            device, saturating, snapshots = True, verbose=True):
+    """
+    Train the GAN model.
+        gan: GAN model instance
+        train_dataloader: torch.utils.data.DataLoader
+        num_epochs: int
+        criterion: loss function
+        device: torch.device
+        saturating: bool (MM or NS loss method)
+        snapshots: bool
+        verbose: bool
+    """
+    if snapshots:
+        img_list = []
+        iters = 0
+    G_loss, D_loss = np.zeros(num_epochs), np.zeros(num_epochs)
+    loss_history = {'G_losses' : G_loss, 'D_losses' : D_loss}
+
+    fixed_noise = torch.randn(64, gan.latent_space, 1, 1, device=device)
+    for epoch in range(num_epochs):
+    # For each batch in the dataloader
+        G_losses, D_losses = np.zeros(len(train_dataloader)), np.zeros(len(train_dataloader))
+        for i, data in enumerate(train_dataloader):
+
+
+            output, label, fake, D_x, D_G_z1, errD = update_D(
+                gan, data, criterion, device)
+
+            D_G_z2, errG = update_G(
+                gan, output, label, fake, criterion, saturating=saturating)
+            # Save Losses for plotting later
+            G_losses[i] = errG.item()
+            D_losses[i] = errD.item()
+
+            # Visualize generator's performance based on fixed_noise
+            if snapshots:
+                if (iters % 500 == 0) or \
+                    ((epoch == num_epochs) and (i == len(train_dataloader)-1)):
+                    with torch.no_grad():
+                        fake = gan.netG(fixed_noise).detach().cpu()
+                    img_list.append(
+                        vutils.make_grid(fake, padding=2, normalize=True)
+                        )
+
+                iters += 1
+        if verbose:
+            print(f'\r[{epoch + 1}/{num_epochs}]\t'
+            f'Loss_D: {errD.item():.4f}, \tLoss_G: {errG.item():.4f}, \tD(x):'
+            f'{D_x:.4f} \tD(G(z)): {D_G_z1:.4f} / {D_G_z2:.4f}', end=' ')
+
+        D_loss[epoch] = np.mean(D_losses)
+        G_loss[epoch] = np.mean(G_losses)
+
+    if snapshots:
+        return loss_history, img_list
+
+    return loss_history
+
+def test_netD(gan, test_loader, criterion):
+    """
+    Test the discriminator.
+        gan: GAN
+        test_loader: torch.utils.data.DataLoader
+        criterion: loss function
+    """
+    gan.netD.eval() #set to evaluation mode
+    loss_list = torch.zeros(
+        len(test_loader),dtype=torch.float, device = gan.device
+        )
+    with torch.no_grad():
+        for i, sample_batched in enumerate(test_loader):
+
+            x_batch = sample_batched[0].to(gan.device)
+            prediction = gan.netD(x_batch)
+            ground_truth = torch.ones(  #Use ones as truth labels
+                prediction.size(),dtype=torch.float, device = gan.device
+                )
+            loss_list[i] = criterion(prediction, ground_truth)
+
+        test_loss = torch.mean(loss_list)
+    return test_loss.item()

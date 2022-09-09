@@ -1,1 +1,1 @@
-{"filters1": 6, "filters2": 14, "filters3": 28, "lin1": 40, "latent_space": 4, "lr": 0.000499268179092969, "optimizer": "AdamW"}
+{"filters1": 15, "filters2": 26, "filters3": 52, "lin1": 141, "latent_space": 10, "lr": 8.501214651257573e-05, "optimizer": "AdamW"}

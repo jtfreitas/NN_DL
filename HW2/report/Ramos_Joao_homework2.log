@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.1) (preloaded format=pdflatex 2022.7.17)  20 JUL 2022 14:50
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.8.28) (preloaded format=pdflatex 2022.7.17)  9 SEP 2022 12:20
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -299,17 +299,118 @@ LaTeX Info: Redefining \Relbar on input line 971.
 \mathdisplay@stack=\toks31
 LaTeX Info: Redefining \[ on input line 2953.
 LaTeX Info: Redefining \] on input line 2954.
+) (/home/jtfreitas/.miktex/texmfs/install/tex/latex/hyperref/hyperref.sty
+Package: hyperref 2022-06-20 v7.00s Hypertext links for LaTeX
+ (/home/jtfreitas/.miktex/texmfs/install/tex/generic/pdftexcmds/pdftexcmds.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO)
+ (/home/jtfreitas/.miktex/texmfs/install/tex/generic/infwarerr/infwarerr.sty
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+)
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+) (/home/jtfreitas/.miktex/texmfs/install/tex/generic/kvdefinekeys/kvdefinekeys.sty
+Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
+) (/home/jtfreitas/.miktex/texmfs/install/tex/generic/pdfescape/pdfescape.sty
+Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
+) (/home/jtfreitas/.miktex/texmfs/install/tex/latex/hycolor/hycolor.sty
+Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
+) (/home/jtfreitas/.miktex/texmfs/install/tex/latex/letltxmacro/letltxmacro.sty
+Package: letltxmacro 2019/12/03 v1.6 Let assignment for LaTeX macros (HO)
+) (/home/jtfreitas/.miktex/texmfs/install/tex/latex/auxhook/auxhook.sty
+Package: auxhook 2019-12-17 v1.6 Hooks for auxiliary files (HO)
+) (/home/jtfreitas/.miktex/texmfs/install/tex/latex/hyperref/nameref.sty
+Package: nameref 2022-05-17 v2.50 Cross-referencing by name of section
+ (/home/jtfreitas/.miktex/texmfs/install/tex/latex/refcount/refcount.sty
+Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
+) (/home/jtfreitas/.miktex/texmfs/install/tex/generic/gettitlestring/gettitlestring.sty
+Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
+)
+\c@section@level=\count302
+)
+\@linkdim=\dimen256
+\Hy@linkcounter=\count303
+\Hy@pagecounter=\count304
+ (/home/jtfreitas/.miktex/texmfs/install/tex/latex/hyperref/pd1enc.def
+File: pd1enc.def 2022-06-20 v7.00s Hyperref: PDFDocEncoding definition (HO)
+Now handling font encoding PD1 ...
+... no UTF-8 mapping file for font encoding PD1
+) (/home/jtfreitas/.miktex/texmfs/install/tex/generic/intcalc/intcalc.sty
+Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
+) (/home/jtfreitas/.miktex/texmfs/install/tex/generic/etexcmds/etexcmds.sty
+Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
+)
+\Hy@SavedSpaceFactor=\count305
+ (/home/jtfreitas/.miktex/texmfs/install/tex/latex/hyperref/puenc.def
+File: puenc.def 2022-06-20 v7.00s Hyperref: PDF Unicode definition (HO)
+Now handling font encoding PU ...
+... no UTF-8 mapping file for font encoding PU
+)
+Package hyperref Info: Hyper figures OFF on input line 4162.
+Package hyperref Info: Link nesting OFF on input line 4167.
+Package hyperref Info: Hyper index ON on input line 4170.
+Package hyperref Info: Plain pages OFF on input line 4177.
+Package hyperref Info: Backreferencing OFF on input line 4182.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4408.
+\c@Hy@tempcnt=\count306
+ (/home/jtfreitas/.miktex/texmfs/install/tex/latex/url/url.sty
+\Urlmuskip=\muskip17
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 4746.
+\XeTeXLinkMargin=\dimen257
+ (/home/jtfreitas/.miktex/texmfs/install/tex/generic/bitset/bitset.sty
+Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
+ (/home/jtfreitas/.miktex/texmfs/install/tex/generic/bigintcalc/bigintcalc.sty
+Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO)
+))
+\Fld@menulength=\count307
+\Field@Width=\dimen258
+\Fld@charsize=\dimen259
+Package hyperref Info: Hyper figures OFF on input line 6024.
+Package hyperref Info: Link nesting OFF on input line 6029.
+Package hyperref Info: Hyper index ON on input line 6032.
+Package hyperref Info: backreferencing OFF on input line 6039.
+Package hyperref Info: Link coloring OFF on input line 6044.
+Package hyperref Info: Link coloring with OCG OFF on input line 6049.
+Package hyperref Info: PDF/A mode OFF on input line 6054.
+ (/home/jtfreitas/.miktex/texmfs/install/tex/latex/base/atbegshi-ltx.sty
+Package: atbegshi-ltx 2021/01/10 v1.0c Emulation of the original atbegshi
+package with kernel methods
+)
+\Hy@abspage=\count308
+\c@Item=\count309
+\c@Hfootnote=\count310
+)
+Package hyperref Info: Driver (autodetected): hpdftex.
+ (/home/jtfreitas/.miktex/texmfs/install/tex/latex/hyperref/hpdftex.def
+File: hpdftex.def 2022-06-20 v7.00s Hyperref driver for pdfTeX
+ (/home/jtfreitas/.miktex/texmfs/install/tex/latex/base/atveryend-ltx.sty
+Package: atveryend-ltx 2020/08/19 v1.0a Emulation of the original atveryend package
+with kernel methods
+)
+\Fld@listcount=\count311
+\c@bookmark@seq@number=\count312
+ (/home/jtfreitas/.miktex/texmfs/install/tex/latex/rerunfilecheck/rerunfilecheck.sty
+Package: rerunfilecheck 2022-07-10 v1.10 Rerun checks for auxiliary files (HO)
+ (/home/jtfreitas/.miktex/texmfs/install/tex/generic/uniquecounter/uniquecounter.sty
+Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
+)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 285.
+)
+\Hy@SectionHShift=\skip60
 ) (/home/jtfreitas/.miktex/texmfs/install/tex/latex/fancyhdr/fancyhdr.sty
 Package: fancyhdr 2022/05/18 v4.0.3 Extensive control of page headers and footers
-\f@nch@headwidth=\skip60
-\f@nch@O@elh=\skip61
-\f@nch@O@erh=\skip62
-\f@nch@O@olh=\skip63
-\f@nch@O@orh=\skip64
-\f@nch@O@elf=\skip65
-\f@nch@O@erf=\skip66
-\f@nch@O@olf=\skip67
-\f@nch@O@orf=\skip68
+\f@nch@headwidth=\skip61
+\f@nch@O@elh=\skip62
+\f@nch@O@erh=\skip63
+\f@nch@O@olh=\skip64
+\f@nch@O@orh=\skip65
+\f@nch@O@elf=\skip66
+\f@nch@O@erf=\skip67
+\f@nch@O@olf=\skip68
+\f@nch@O@orf=\skip69
 ) (/home/jtfreitas/.miktex/texmfs/install/tex/latex/sectsty/sectsty.sty
 Package: sectsty 2002/02/25 v2.0.2 Commands to change all sectional heading styles
 
@@ -331,70 +432,70 @@ Package tocbibind Note: Using section or other style headings.
 ) (/home/jtfreitas/.miktex/texmfs/install/tex/latex/tocloft/tocloft.sty
 Package: tocloft 2017/08/31 v2.3i parameterised ToC, etc., typesetting
 Package tocloft Info: The document has section divisions on input line 51.
-\cftparskip=\skip69
-\cftbeforetoctitleskip=\skip70
-\cftaftertoctitleskip=\skip71
-\cftbeforepartskip=\skip72
-\cftpartnumwidth=\skip73
-\cftpartindent=\skip74
-\cftbeforesecskip=\skip75
-\cftsecindent=\skip76
-\cftsecnumwidth=\skip77
-\cftbeforesubsecskip=\skip78
-\cftsubsecindent=\skip79
-\cftsubsecnumwidth=\skip80
-\cftbeforesubsubsecskip=\skip81
-\cftsubsubsecindent=\skip82
-\cftsubsubsecnumwidth=\skip83
-\cftbeforeparaskip=\skip84
-\cftparaindent=\skip85
-\cftparanumwidth=\skip86
-\cftbeforesubparaskip=\skip87
-\cftsubparaindent=\skip88
-\cftsubparanumwidth=\skip89
-\cftbeforeloftitleskip=\skip90
-\cftafterloftitleskip=\skip91
-\cftbeforefigskip=\skip92
-\cftfigindent=\skip93
-\cftfignumwidth=\skip94
-\cftbeforelottitleskip=\skip95
-\cftafterlottitleskip=\skip96
-\cftbeforetabskip=\skip97
-\cfttabindent=\skip98
-\cfttabnumwidth=\skip99
-\cftbeforesubfigskip=\skip100
-\cftsubfigindent=\skip101
-\cftsubfignumwidth=\skip102
-\cftbeforesubtabskip=\skip103
-\cftsubtabindent=\skip104
-\cftsubtabnumwidth=\skip105
+\cftparskip=\skip70
+\cftbeforetoctitleskip=\skip71
+\cftaftertoctitleskip=\skip72
+\cftbeforepartskip=\skip73
+\cftpartnumwidth=\skip74
+\cftpartindent=\skip75
+\cftbeforesecskip=\skip76
+\cftsecindent=\skip77
+\cftsecnumwidth=\skip78
+\cftbeforesubsecskip=\skip79
+\cftsubsecindent=\skip80
+\cftsubsecnumwidth=\skip81
+\cftbeforesubsubsecskip=\skip82
+\cftsubsubsecindent=\skip83
+\cftsubsubsecnumwidth=\skip84
+\cftbeforeparaskip=\skip85
+\cftparaindent=\skip86
+\cftparanumwidth=\skip87
+\cftbeforesubparaskip=\skip88
+\cftsubparaindent=\skip89
+\cftsubparanumwidth=\skip90
+\cftbeforeloftitleskip=\skip91
+\cftafterloftitleskip=\skip92
+\cftbeforefigskip=\skip93
+\cftfigindent=\skip94
+\cftfignumwidth=\skip95
+\cftbeforelottitleskip=\skip96
+\cftafterlottitleskip=\skip97
+\cftbeforetabskip=\skip98
+\cfttabindent=\skip99
+\cfttabnumwidth=\skip100
+\cftbeforesubfigskip=\skip101
+\cftsubfigindent=\skip102
+\cftsubfignumwidth=\skip103
+\cftbeforesubtabskip=\skip104
+\cftsubtabindent=\skip105
+\cftsubtabnumwidth=\skip106
 
 
 Package tocloft Warning: \@starttoc has already been redefined; tocloft bailing out. on input line 1156.
 
 ) (/home/jtfreitas/.miktex/texmfs/install/tex/latex/float/float.sty
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
-\c@float@type=\count302
+\c@float@type=\count313
 \float@exts=\toks32
 \float@box=\box102
 \@float@everytoks=\toks33
 \@floatcapt=\box103
 ) (/home/jtfreitas/.miktex/texmfs/install/tex/latex/makecell/makecell.sty
 Package: makecell 2009/08/03 V0.1e Managing of Tab Column Heads and Cells
-\rotheadsize=\dimen256
-\c@nlinenum=\count303
+\rotheadsize=\dimen260
+\c@nlinenum=\count314
 \TeXr@lab=\toks34
 ) (/home/jtfreitas/.miktex/texmfs/install/tex/latex/caption/subcaption.sty
 Package: subcaption 2022/01/07 v1.5 Sub-captions (AR)
-\c@subfigure=\count304
-\c@subtable=\count305
+\c@subfigure=\count315
+\c@subtable=\count316
 ) (/home/jtfreitas/.miktex/texmfs/install/tex/latex/mdframed/mdframed.sty
 Package: mdframed 2013/07/01 1.9b: mdframed
  (/home/jtfreitas/.miktex/texmfs/install/tex/latex/l3packages/xparse/xparse.sty (/home/jtfreitas/.miktex/texmfs/install/tex/latex/l3kernel/expl3.sty
 Package: expl3 2022-07-04 L3 programming layer (loader) 
  (/home/jtfreitas/.miktex/texmfs/install/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2022-07-01 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count306
+\l__color_backend_stack_int=\count317
 \l__pdf_internal_box=\box104
 ))
 Package: xparse 2022-06-22 L3 Experimental document command parser
@@ -402,28 +503,11 @@ Package: xparse 2022-06-22 L3 Experimental document command parser
 Package: zref-abspage 2022-04-07 v2.34 Module abspage for zref (HO)
  (/home/jtfreitas/.miktex/texmfs/install/tex/latex/zref/zref-base.sty
 Package: zref-base 2022-04-07 v2.34 Module base for zref (HO)
- (/home/jtfreitas/.miktex/texmfs/install/tex/generic/infwarerr/infwarerr.sty
-Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
-) (/home/jtfreitas/.miktex/texmfs/install/tex/generic/kvdefinekeys/kvdefinekeys.sty
-Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
-) (/home/jtfreitas/.miktex/texmfs/install/tex/generic/pdftexcmds/pdftexcmds.sty
-Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO)
-Package pdftexcmds Info: \pdf@primitive is available.
-Package pdftexcmds Info: \pdf@ifprimitive is available.
-Package pdftexcmds Info: \pdfdraftmode found.
-) (/home/jtfreitas/.miktex/texmfs/install/tex/generic/etexcmds/etexcmds.sty
-Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
-) (/home/jtfreitas/.miktex/texmfs/install/tex/latex/auxhook/auxhook.sty
-Package: auxhook 2019-12-17 v1.6 Hooks for auxiliary files (HO)
-)
 Package zref Info: New property list: main on input line 767.
 Package zref Info: New property: default on input line 768.
 Package zref Info: New property: page on input line 769.
-) (/home/jtfreitas/.miktex/texmfs/install/tex/latex/base/atbegshi-ltx.sty
-Package: atbegshi-ltx 2021/01/10 v1.0c Emulation of the original atbegshi
-package with kernel methods
 )
-\c@abspage=\count307
+\c@abspage=\count318
 Package zref Info: New property: abspage on input line 65.
 ) (/home/jtfreitas/.miktex/texmfs/install/tex/latex/needspace/needspace.sty
 Package: needspace 2010/09/12 v1.3d reserve vertical space
@@ -434,47 +518,47 @@ File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
 Package color Info: Driver file: pdftex.def on input line 149.
  (/home/jtfreitas/.miktex/texmfs/install/tex/latex-dev/graphics/mathcolor.ltx))
-\mdf@templength=\skip106
-\c@mdf@globalstyle@cnt=\count308
-\mdf@skipabove@length=\skip107
-\mdf@skipbelow@length=\skip108
-\mdf@leftmargin@length=\skip109
-\mdf@rightmargin@length=\skip110
-\mdf@innerleftmargin@length=\skip111
-\mdf@innerrightmargin@length=\skip112
-\mdf@innertopmargin@length=\skip113
-\mdf@innerbottommargin@length=\skip114
-\mdf@splittopskip@length=\skip115
-\mdf@splitbottomskip@length=\skip116
-\mdf@outermargin@length=\skip117
-\mdf@innermargin@length=\skip118
-\mdf@linewidth@length=\skip119
-\mdf@innerlinewidth@length=\skip120
-\mdf@middlelinewidth@length=\skip121
-\mdf@outerlinewidth@length=\skip122
-\mdf@roundcorner@length=\skip123
-\mdf@footenotedistance@length=\skip124
-\mdf@userdefinedwidth@length=\skip125
-\mdf@needspace@length=\skip126
-\mdf@frametitleaboveskip@length=\skip127
-\mdf@frametitlebelowskip@length=\skip128
-\mdf@frametitlerulewidth@length=\skip129
-\mdf@frametitleleftmargin@length=\skip130
-\mdf@frametitlerightmargin@length=\skip131
-\mdf@shadowsize@length=\skip132
-\mdf@extratopheight@length=\skip133
-\mdf@subtitleabovelinewidth@length=\skip134
-\mdf@subtitlebelowlinewidth@length=\skip135
-\mdf@subtitleaboveskip@length=\skip136
-\mdf@subtitlebelowskip@length=\skip137
-\mdf@subtitleinneraboveskip@length=\skip138
-\mdf@subtitleinnerbelowskip@length=\skip139
-\mdf@subsubtitleabovelinewidth@length=\skip140
-\mdf@subsubtitlebelowlinewidth@length=\skip141
-\mdf@subsubtitleaboveskip@length=\skip142
-\mdf@subsubtitlebelowskip@length=\skip143
-\mdf@subsubtitleinneraboveskip@length=\skip144
-\mdf@subsubtitleinnerbelowskip@length=\skip145
+\mdf@templength=\skip107
+\c@mdf@globalstyle@cnt=\count319
+\mdf@skipabove@length=\skip108
+\mdf@skipbelow@length=\skip109
+\mdf@leftmargin@length=\skip110
+\mdf@rightmargin@length=\skip111
+\mdf@innerleftmargin@length=\skip112
+\mdf@innerrightmargin@length=\skip113
+\mdf@innertopmargin@length=\skip114
+\mdf@innerbottommargin@length=\skip115
+\mdf@splittopskip@length=\skip116
+\mdf@splitbottomskip@length=\skip117
+\mdf@outermargin@length=\skip118
+\mdf@innermargin@length=\skip119
+\mdf@linewidth@length=\skip120
+\mdf@innerlinewidth@length=\skip121
+\mdf@middlelinewidth@length=\skip122
+\mdf@outerlinewidth@length=\skip123
+\mdf@roundcorner@length=\skip124
+\mdf@footenotedistance@length=\skip125
+\mdf@userdefinedwidth@length=\skip126
+\mdf@needspace@length=\skip127
+\mdf@frametitleaboveskip@length=\skip128
+\mdf@frametitlebelowskip@length=\skip129
+\mdf@frametitlerulewidth@length=\skip130
+\mdf@frametitleleftmargin@length=\skip131
+\mdf@frametitlerightmargin@length=\skip132
+\mdf@shadowsize@length=\skip133
+\mdf@extratopheight@length=\skip134
+\mdf@subtitleabovelinewidth@length=\skip135
+\mdf@subtitlebelowlinewidth@length=\skip136
+\mdf@subtitleaboveskip@length=\skip137
+\mdf@subtitlebelowskip@length=\skip138
+\mdf@subtitleinneraboveskip@length=\skip139
+\mdf@subtitleinnerbelowskip@length=\skip140
+\mdf@subsubtitleabovelinewidth@length=\skip141
+\mdf@subsubtitlebelowlinewidth@length=\skip142
+\mdf@subsubtitleaboveskip@length=\skip143
+\mdf@subsubtitlebelowskip@length=\skip144
+\mdf@subsubtitleinneraboveskip@length=\skip145
+\mdf@subsubtitleinnerbelowskip@length=\skip146
  (/home/jtfreitas/.miktex/texmfs/install/tex/latex/mdframed/md-frame-0.mdf
 File: md-frame-0.mdf 2013/07/01\ 1.9b: md-frame-0
 )
@@ -483,61 +567,65 @@ File: md-frame-0.mdf 2013/07/01\ 1.9b: md-frame-0
 \mdf@splitbox@one=\box107
 \mdf@splitbox@two=\box108
 \mdf@splitbox@save=\box109
-\mdfsplitboxwidth=\skip146
-\mdfsplitboxtotalwidth=\skip147
-\mdfsplitboxheight=\skip148
-\mdfsplitboxdepth=\skip149
-\mdfsplitboxtotalheight=\skip150
-\mdfframetitleboxwidth=\skip151
-\mdfframetitleboxtotalwidth=\skip152
-\mdfframetitleboxheight=\skip153
-\mdfframetitleboxdepth=\skip154
-\mdfframetitleboxtotalheight=\skip155
-\mdffootnoteboxwidth=\skip156
-\mdffootnoteboxtotalwidth=\skip157
-\mdffootnoteboxheight=\skip158
-\mdffootnoteboxdepth=\skip159
-\mdffootnoteboxtotalheight=\skip160
-\mdftotallinewidth=\skip161
-\mdfboundingboxwidth=\skip162
-\mdfboundingboxtotalwidth=\skip163
-\mdfboundingboxheight=\skip164
-\mdfboundingboxdepth=\skip165
-\mdfboundingboxtotalheight=\skip166
-\mdf@freevspace@length=\skip167
-\mdf@horizontalwidthofbox@length=\skip168
-\mdf@verticalmarginwhole@length=\skip169
-\mdf@horizontalspaceofbox=\skip170
-\mdfsubtitleheight=\skip171
-\mdfsubsubtitleheight=\skip172
-\c@mdfcountframes=\count309
+\mdfsplitboxwidth=\skip147
+\mdfsplitboxtotalwidth=\skip148
+\mdfsplitboxheight=\skip149
+\mdfsplitboxdepth=\skip150
+\mdfsplitboxtotalheight=\skip151
+\mdfframetitleboxwidth=\skip152
+\mdfframetitleboxtotalwidth=\skip153
+\mdfframetitleboxheight=\skip154
+\mdfframetitleboxdepth=\skip155
+\mdfframetitleboxtotalheight=\skip156
+\mdffootnoteboxwidth=\skip157
+\mdffootnoteboxtotalwidth=\skip158
+\mdffootnoteboxheight=\skip159
+\mdffootnoteboxdepth=\skip160
+\mdffootnoteboxtotalheight=\skip161
+\mdftotallinewidth=\skip162
+\mdfboundingboxwidth=\skip163
+\mdfboundingboxtotalwidth=\skip164
+\mdfboundingboxheight=\skip165
+\mdfboundingboxdepth=\skip166
+\mdfboundingboxtotalheight=\skip167
+\mdf@freevspace@length=\skip168
+\mdf@horizontalwidthofbox@length=\skip169
+\mdf@verticalmarginwhole@length=\skip170
+\mdf@horizontalspaceofbox=\skip171
+\mdfsubtitleheight=\skip172
+\mdfsubsubtitleheight=\skip173
+\c@mdfcountframes=\count320
 
 ****** mdframed patching \endmdf@trivlist
 
 ****** -- success******
 
-\mdf@envdepth=\count310
-\c@mdf@env@i=\count311
-\c@mdf@env@ii=\count312
-\c@mdf@zref@counter=\count313
+\mdf@envdepth=\count321
+\c@mdf@env@i=\count322
+\c@mdf@env@ii=\count323
+\c@mdf@zref@counter=\count324
 Package zref Info: New property: mdf@pagevalue on input line 895.
 ) (Ramos_Joao_homework2.aux)
 \openout1 = `Ramos_Joao_homework2.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 73.
-LaTeX Font Info:    ... okay on input line 73.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 73.
-LaTeX Font Info:    ... okay on input line 73.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 73.
-LaTeX Font Info:    ... okay on input line 73.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 73.
-LaTeX Font Info:    ... okay on input line 73.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 73.
-LaTeX Font Info:    ... okay on input line 73.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 73.
-LaTeX Font Info:    ... okay on input line 73.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 73.
-LaTeX Font Info:    ... okay on input line 73.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 75.
+LaTeX Font Info:    ... okay on input line 75.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 75.
+LaTeX Font Info:    ... okay on input line 75.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 75.
+LaTeX Font Info:    ... okay on input line 75.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 75.
+LaTeX Font Info:    ... okay on input line 75.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 75.
+LaTeX Font Info:    ... okay on input line 75.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 75.
+LaTeX Font Info:    ... okay on input line 75.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 75.
+LaTeX Font Info:    ... okay on input line 75.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 75.
+LaTeX Font Info:    ... okay on input line 75.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 75.
+LaTeX Font Info:    ... okay on input line 75.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -575,16 +663,16 @@ LaTeX Font Info:    ... okay on input line 73.
 
 (/home/jtfreitas/.miktex/texmfs/install/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count314
-\scratchdimen=\dimen257
+\scratchcounter=\count325
+\scratchdimen=\dimen261
 \scratchbox=\box110
-\nofMPsegments=\count315
-\nofMParguments=\count316
+\nofMPsegments=\count326
+\nofMParguments=\count327
 \everyMPshowfont=\toks35
-\MPscratchCnt=\count317
-\MPscratchDim=\dimen258
-\MPnumerator=\count318
-\makeMPintoPDFobject=\count319
+\MPscratchCnt=\count328
+\MPscratchDim=\dimen262
+\MPnumerator=\count329
+\makeMPintoPDFobject=\count330
 \everyMPtoPDFconversion=\toks36
 ) (/home/jtfreitas/.miktex/texmfs/install/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
@@ -594,59 +682,168 @@ File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: float package is loaded.
+Package caption Info: hyperref package is loaded.
 Package caption Info: wrapfig package is loaded.
 Package caption Info: End \AtBeginDocument code.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 74.
+Package hyperref Info: Link coloring OFF on input line 75.
+ (Ramos_Joao_homework2.out) (Ramos_Joao_homework2.out)
+\@outlinefile=\write3
+\openout3 = `Ramos_Joao_homework2.out'.
+
+LaTeX Font Info:    Trying to load font information for U+msa on input line 77.
  (/home/jtfreitas/.miktex/texmfs/install/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 74.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 77.
  (/home/jtfreitas/.miktex/texmfs/install/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
 {/home/jtfreitas/.miktex/texmfs/data/fonts/map/pdftex/pdftex.map}] [2]
-Overfull \hbox (0.70596pt too wide) in paragraph at lines 127--128
-\OT1/cmr/m/n/10.95 would have to explore the hyperparameter space based on two different metrics (generator
+Overfull \hbox (0.70596pt too wide) in paragraph at lines 129--130
+\OT1/cmr/m/n/10.95 would have to explore the hy-per-pa-ra-me-ter space based on two different metrics (generator
  []
 
 [3]
-<res/learning_curve_KFCV.pdf, id=27, 867.24pt x 505.89pt>
+Underfull \hbox (badness 3954) in paragraph at lines 161--162
+[][]\OT1/cmr/m/n/10.95 While the training loss ex-
+ []
+
+
+Underfull \hbox (badness 2529) in paragraph at lines 161--162
+\OT1/cmr/m/n/10.95 trend is similar for training
+ []
+
+
+Underfull \hbox (badness 4096) in paragraph at lines 161--162
+\OT1/cmr/m/n/10.95 The convergence of training
+ []
+
+
+Underfull \hbox (badness 1755) in paragraph at lines 161--162
+\OT1/cmr/m/n/10.95 training epochs indicates the
+ []
+
+
+Underfull \hbox (badness 1259) in paragraph at lines 161--162
+\OT1/cmr/m/n/10.95 model is well-regularized and
+ []
+
+
+Package wrapfig Warning: Collision between wrapping environments on input line 163.
+
+<res/learning_curve_KFCV.pdf, id=47, 867.24pt x 505.89pt>
 File: res/learning_curve_KFCV.pdf Graphic file (type pdf)
 <use res/learning_curve_KFCV.pdf>
-Package pdftex.def Info: res/learning_curve_KFCV.pdf  used on input line 139.
+Package pdftex.def Info: res/learning_curve_KFCV.pdf  used on input line 165.
 (pdftex.def)             Requested size: 217.4937pt x 126.86586pt.
 
-Overfull \hbox (18.32442pt too wide) in paragraph at lines 139--140
+Overfull \hbox (18.32442pt too wide) in paragraph at lines 165--166
  [][] 
  []
 
-<res/Reconstruction.pdf, id=28, 794.97pt x 216.81pt>
-File: res/Reconstruction.pdf Graphic file (type pdf)
-<use res/Reconstruction.pdf>
-Package pdftex.def Info: res/Reconstruction.pdf  used on input line 148.
-(pdftex.def)             Requested size: 418.25368pt x 114.07176pt.
 
-Overfull \hbox (2.46379pt too wide) in paragraph at lines 154--155
-\OT1/cmr/m/n/10.95 The denoising capabilities of the autoencoder
+Package wrapfig Warning: Stationary wrapfigure forced to float on input line 170.
+
+
+Underfull \hbox (badness 2261) in paragraph at lines 170--171
+\OT1/cmr/m/n/10.95 The denoising capabilities of
  []
 
-[4 <./res/learning_curve_KFCV.pdf> <./res/Reconstruction.pdf
 
-pdfTeX warning: pdflatex (file ./res/Reconstruction.pdf): PDF inclusion: multiple pdfs with page group included in a single page
->] [5] (Ramos_Joao_homework2.aux) ) 
+Underfull \hbox (badness 3158) in paragraph at lines 170--171
+\OT1/cmr/m/n/10.95 the autoencoder were tested
+ []
+
+
+Underfull \hbox (badness 2302) in paragraph at lines 170--171
+\OT1/cmr/m/n/10.95 by inputting an image with
+ []
+
+
+Underfull \hbox (badness 6859) in paragraph at lines 172--173
+[]\OT1/cmr/m/n/10.95 Two classifier models were separately
+ []
+
+
+Underfull \hbox (badness 1221) in paragraph at lines 172--173
+\OT1/cmr/m/n/10.95 in the loss seems consistent throughout
+ []
+
+
+Underfull \hbox (badness 2119) in paragraph at lines 172--173
+\OT1/cmr/m/n/10.95 the training process. Still, both sets
+ []
+
+
+Underfull \hbox (badness 2809) in paragraph at lines 172--173
+\OT1/cmr/m/n/10.95 which converges in similar time. Of
+ []
+
+
+Underfull \hbox (badness 4378) in paragraph at lines 172--173
+\OT1/cmr/m/n/10.95 course, the classifiers used were fully
+ []
+
+
+Underfull \hbox (badness 1824) in paragraph at lines 172--173
+\OT1/cmr/m/n/10.95 for image classification. However, the
+ []
+
+<res/Reconstruction.pdf, id=50, 794.97pt x 216.81pt>
+File: res/Reconstruction.pdf Graphic file (type pdf)
+<use res/Reconstruction.pdf>
+Package pdftex.def Info: res/Reconstruction.pdf  used on input line 176.
+(pdftex.def)             Requested size: 418.25368pt x 114.07176pt.
+<res/classifier_lcurve.pdf, id=51, 867.24pt x 361.35pt>
+File: res/classifier_lcurve.pdf Graphic file (type pdf)
+<use res/classifier_lcurve.pdf>
+Package pdftex.def Info: res/classifier_lcurve.pdf  used on input line 183.
+(pdftex.def)             Requested size: 418.25368pt x 174.27309pt.
+[4 <./res/learning_curve_KFCV.pdf>] [5 <./res/Reconstruction.pdf> <./res/classifier_lcurve.pdf
+
+pdfTeX warning: pdflatex (file ./res/classifier_lcurve.pdf): PDF inclusion: multiple pdfs with page group included in a single page
+>]
+Overfull \hbox (3.93024pt too wide) in paragraph at lines 192--193
+\OT1/cmr/m/n/10.95 Furthermore, most attempts lead to an overtrained dis-cri-mi-na-tor that hinders the learning
+ []
+
+
+Underfull \hbox (badness 2653) in paragraph at lines 206--207
+\OT1/cmr/m/n/10.95 and a non-saturating criteria. The
+ []
+
+
+Overfull \hbox (3.5639pt too wide) in paragraph at lines 220--221
+[][]\OT1/cmr/m/n/10.95 In order to further explore the performance
+ []
+
+
+Underfull \hbox (badness 1043) in paragraph at lines 220--221
+\OT1/cmr/m/n/10.95 an improved performance. The non-
+ []
+
+
+Underfull \hbox (badness 1694) in paragraph at lines 220--221
+\OT1/cmr/m/n/10.95 saturating dis-cri-mi-na-tor shows a bias
+ []
+
+[6] (Ramos_Joao_homework2.aux)
+Package rerunfilecheck Info: File `Ramos_Joao_homework2.out' has not changed.
+(rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
+ ) 
 Here is how much of TeX's memory you used:
- 7765 strings out of 480273
- 136970 string characters out of 2888130
- 450579 words of memory out of 3000000
- 25797 multiletter control sequences out of 15000+600000
+ 13878 strings out of 480273
+ 230738 string characters out of 2888130
+ 554241 words of memory out of 3000000
+ 31814 multiletter control sequences out of 15000+600000
  480994 words of font info for 72 fonts, out of 8000000 for 9000
- 0 hyphenation exceptions out of 8191
- 73i,17n,77p,1044b,335s stack positions out of 10000i,1000n,20000p,200000b,80000s
+ 4 hyphenation exceptions out of 8191
+ 72i,18n,77p,977b,460s stack positions out of 10000i,1000n,20000p,200000b,80000s
 </home/jtfreitas/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmbx10.pfb></home/jtfreitas/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmbx8.pfb></home/jtfreitas/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmcsc10.pfb></home/jtfreitas/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmex10.pfb></home/jtfreitas/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmmi10.pfb></home/jtfreitas/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmmi6.pfb></home/jtfreitas/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmmi8.pfb></home/jtfreitas/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmr10.pfb></home/jtfreitas/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmr12.pfb></home/jtfreitas/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmr17.pfb></home/jtfreitas/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmr6.pfb></home/jtfreitas/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmr8.pfb></home/jtfreitas/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmr9.pfb></home/jtfreitas/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmss12.pfb></home/jtfreitas/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmsy10.pfb></home/jtfreitas/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmsy8.pfb></home/jtfreitas/.miktex/texmfs/install/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on Ramos_Joao_homework2.pdf (5 pages, 274918 bytes).
+Output written on Ramos_Joao_homework2.pdf (6 pages, 301816 bytes).
 PDF statistics:
- 205 PDF objects out of 1000 (max. 8388607)
- 0 named destinations out of 1000 (max. 500000)
- 11 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 293 PDF objects out of 1000 (max. 8388607)
+ 23 named destinations out of 1000 (max. 500000)
+ 16 words of extra memory for PDF output out of 10000 (max. 10000000)
 
